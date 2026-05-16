@@ -42,6 +42,8 @@ export default function DonutChart({ data, height = 200, innerRadius = 55, value
             fontSize: 12,
             color: theme.tooltip.text,
           }}
+          labelStyle={{ color: theme.tooltip.label, fontSize: 11, marginBottom: 2 }}
+          itemStyle={{ color: theme.tooltip.text }}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           formatter={(v, _key, props: any) => [
             valueFormatter ? valueFormatter(Number(v)) : `${v}%`,

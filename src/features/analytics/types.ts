@@ -115,8 +115,8 @@ export interface EntityNode {
   id: string
   lines: string[]
   type: 'source' | 'author' | 'post' | 'org' | 'topic'
-  x: number
-  y: number
+  x?: number
+  y?: number
   r: number
 }
 

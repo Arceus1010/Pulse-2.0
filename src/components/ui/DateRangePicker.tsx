@@ -215,7 +215,7 @@ export default function DateRangePicker({ from, to, onChange, className }: Props
     <div ref={ref} className={`relative ${className ?? ''}`}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+        className="flex items-center gap-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
       >
         <Calendar className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
         <span>{label}</span>

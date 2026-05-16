@@ -49,6 +49,8 @@ export default function AnalyticsRadar({ data, height = 280 }: Props) {
             fontSize: 12,
             color: theme.tooltip.text,
           }}
+          labelStyle={{ color: theme.tooltip.label, fontSize: 11, marginBottom: 2 }}
+          itemStyle={{ color: theme.tooltip.text }}
         />
       </RadarChart>
     </ResponsiveContainer>

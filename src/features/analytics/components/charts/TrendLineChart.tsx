@@ -24,12 +24,18 @@ function fmtNum(v: number) {
 
 export default function TrendLineChart({ data, lines, bars, xKey = 'date', height = 260, valueFormatter = fmtNum }: Props) {
   const theme = useChartTheme()
-  const tooltipStyle = {
-    backgroundColor: theme.tooltip.bg,
-    border: `1px solid ${theme.tooltip.border}`,
-    borderRadius: 6,
-    fontSize: 12,
-    color: theme.tooltip.text,
+
+  const tooltipProps = {
+    contentStyle: {
+      backgroundColor: theme.tooltip.bg,
+      border: `1px solid ${theme.tooltip.border}`,
+      borderRadius: 6,
+      fontSize: 12,
+      color: theme.tooltip.text,
+    },
+    labelStyle: { color: theme.tooltip.label, fontSize: 11, marginBottom: 2 },
+    itemStyle: { color: theme.tooltip.text },
+    formatter: (v: unknown): string => typeof v === 'number' ? valueFormatter(v) : String(v),
   }
 
   if (bars) {
@@ -40,7 +46,7 @@ export default function TrendLineChart({ data, lines, bars, xKey = 'date', heigh
           <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} vertical={false} />
           <XAxis dataKey="platform" tick={{ fill: theme.text, fontSize: 11 }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fill: theme.text, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={valueFormatter} />
-          <Tooltip contentStyle={tooltipStyle} formatter={(v) => typeof v === 'number' ? valueFormatter(v) : v} />
+          <Tooltip cursor={{ fill: theme.cursor }} {...tooltipProps} />
           <Bar dataKey={bars.key} radius={[4, 4, 0, 0]} maxBarSize={48}>
             {data.map((_, i) => <Cell key={i} fill={colors[i % colors.length]} />)}
           </Bar>
@@ -55,7 +61,7 @@ export default function TrendLineChart({ data, lines, bars, xKey = 'date', heigh
         <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} vertical={false} />
         <XAxis dataKey={xKey} tick={{ fill: theme.text, fontSize: 11 }} axisLine={false} tickLine={false} />
         <YAxis tick={{ fill: theme.text, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={valueFormatter} />
-        <Tooltip contentStyle={tooltipStyle} formatter={(v) => typeof v === 'number' ? valueFormatter(v) : v} />
+        <Tooltip cursor={{ stroke: theme.grid, strokeWidth: 1 }} {...tooltipProps} />
         {(lines ?? []).map(l => (
           <Line
             key={l.key}

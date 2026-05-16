@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { X, Play, Search } from 'lucide-react'
+import { X, Zap, Search } from 'lucide-react'
 import { useAnalyticsFilters } from './hooks/useAnalyticsFilters'
 import { ALL_PLATFORMS, PLATFORM_LABELS } from './constants'
 import type { Platform } from './types'
@@ -9,10 +9,10 @@ import MultiSelect from '../../components/ui/MultiSelect'
 
 const NAV_ITEMS = [
   { to: '/analytics/overview', label: 'Overview' },
+  { to: '/analytics/trend', label: 'Trend' },
   { to: '/analytics/sentiment', label: 'Sentiment' },
   { to: '/analytics/source', label: 'Source' },
   { to: '/analytics/geo', label: 'Geographic' },
-  { to: '/analytics/trend', label: 'Trend' },
   { to: '/analytics/pestle', label: 'PESTLE' },
 ]
 
@@ -22,7 +22,14 @@ export default function Analytics() {
   const { filter, setFilter } = useAnalyticsFilters()
   const [kwInput, setKwInput] = useState('')
   const [local, setLocal] = useState({ ...filter })
+  const [analysing, setAnalysing] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const runAnalysis = () => {
+    setFilter(local)
+    setAnalysing(true)
+    setTimeout(() => setAnalysing(false), 1800)
+  }
 
   const addKw = () => {
     const val = kwInput.trim()
@@ -112,11 +119,12 @@ export default function Analytics() {
           {/* Run */}
           <div className="flex items-center px-4 py-3 shrink-0">
             <button
-              onClick={() => setFilter(local)}
-              className="h-8 px-5 rounded-sm bg-blue-800 hover:bg-blue-900 text-white text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer"
+              onClick={runAnalysis}
+              disabled={analysing}
+              className="h-8 px-5 rounded-sm bg-blue-800 hover:bg-blue-900 disabled:opacity-60 text-white text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer disabled:cursor-not-allowed"
             >
-              <Play className="w-3 h-3 fill-white" />
-              Run Analysis
+              <Zap className={`w-3.5 h-3.5 fill-white stroke-none ${analysing ? 'animate-pulse' : ''}`} />
+              {analysing ? 'Analysing…' : 'Analyse'}
             </button>
           </div>
 
@@ -144,8 +152,24 @@ export default function Analytics() {
 
       </div>
 
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 relative">
         <Outlet />
+        {analysing && (
+          <div className="absolute inset-0 z-30 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+            <div className="flex items-center gap-1.5">
+              {[0, 1, 2, 3, 4].map(i => (
+                <div
+                  key={i}
+                  className="w-1 rounded-full bg-blue-600 animate-bounce"
+                  style={{ height: 20, animationDelay: `${i * 80}ms` }}
+                />
+              ))}
+            </div>
+            <p className="text-xs font-semibold text-slate-500 dark:text-zinc-400 tracking-widest uppercase select-none">
+              Running analysis…
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

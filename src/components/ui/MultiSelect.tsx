@@ -54,7 +54,7 @@ export default function MultiSelect({ options, selected, onChange, label, classN
     <div ref={ref} className={`relative ${className ?? ''}`}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors"
+        className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
       >
         <Layers className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" />
         <span>{triggerLabel()}</span>

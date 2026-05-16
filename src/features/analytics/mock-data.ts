@@ -295,38 +295,64 @@ export const strongestRelations: StrongestRelation[] = [
 ]
 
 export const entityNodes: EntityNode[] = [
-  { id: 'ssm', lines: ['SSM'], type: 'org', x: 450, y: 260, r: 28 },
-  { id: 'mySSM', lines: ['MySSM', 'Portal'], type: 'source', x: 320, y: 160, r: 22 },
-  { id: 'twitter', lines: ['Twitter/X'], type: 'source', x: 160, y: 180, r: 20 },
-  { id: 'news', lines: ['News', 'Sites'], type: 'source', x: 160, y: 300, r: 20 },
-  { id: 'tiktok', lines: ['TikTok'], type: 'source', x: 160, y: 400, r: 18 },
-  { id: 'ssm_acc', lines: ['@ssm_malaysia'], type: 'author', x: 300, y: 80, r: 18 },
-  { id: 'bizwire', lines: ['BizWire MY'], type: 'post', x: 560, y: 120, r: 18 },
-  { id: 'klfinance', lines: ['@KLFinance', 'Watch'], type: 'author', x: 660, y: 220, r: 16 },
-  { id: 'shell', lines: ['Shell', 'Companies'], type: 'topic', x: 580, y: 360, r: 22 },
-  { id: 'mySSMtopic', lines: ['Portal', 'Launch'], type: 'topic', x: 350, y: 380, r: 20 },
-  { id: 'filing', lines: ['Annual', 'Filing'], type: 'topic', x: 200, y: 480, r: 18 },
-  { id: 'penalty', lines: ['Penalties'], type: 'topic', x: 400, y: 480, r: 16 },
-  { id: 'anwar', lines: ['Anwar', 'Ibrahim'], type: 'org', x: 660, y: 360, r: 16 },
-  { id: 'companiesact', lines: ['Companies', 'Act'], type: 'org', x: 720, y: 280, r: 18 },
+  // Orgs
+  { id: 'ssm',          lines: ['SSM'],               type: 'org',    r: 26 },
+  { id: 'bnm',          lines: ['Bank', 'Negara'],    type: 'org',    r: 22 },
+  { id: 'mof',          lines: ['MOF'],               type: 'org',    r: 17 },
+  { id: 'companies_act',lines: ['Companies', 'Act'],  type: 'org',    r: 14 },
+  // Sources
+  { id: 'twitter',      lines: ['Twitter / X'],       type: 'source', r: 17 },
+  { id: 'the_edge',     lines: ['The Edge'],          type: 'source', r: 16 },
+  { id: 'bernama',      lines: ['Bernama'],           type: 'source', r: 15 },
+  { id: 'tiktok',       lines: ['TikTok'],            type: 'source', r: 14 },
+  // Authors
+  { id: 'ssm_acc',      lines: ['@ssm', 'malaysia'],  type: 'author', r: 16 },
+  { id: 'edge_acc',     lines: ['@Edge', 'Markets'],  type: 'author', r: 15 },
+  { id: 'klfw',         lines: ['@KLFin', 'Watch'],   type: 'author', r: 14 },
+  // Posts
+  { id: 'audit_notice', lines: ['Audit', 'Notice'],   type: 'post',   r: 14 },
+  { id: 'bnm_report',   lines: ['BNM', 'Report'],     type: 'post',   r: 14 },
+  // Topics
+  { id: 'shell',        lines: ['Shell', 'Companies'],type: 'topic',  r: 22 },
+  { id: 'late_filing',  lines: ['Late', 'Filing'],    type: 'topic',  r: 19 },
+  { id: 'penalty',      lines: ['RM50/day', 'Penalty'],type: 'topic', r: 16 },
+  { id: 'aml',          lines: ['AML', 'Risk'],       type: 'topic',  r: 18 },
 ]
 
 export const entityEdges: EntityEdge[] = [
-  { from: 'ssm', to: 'mySSM', label: 'manages' },
-  { from: 'ssm', to: 'shell', label: 'regulates' },
-  { from: 'ssm', to: 'companiesact', label: 'enforces' },
-  { from: 'twitter', to: 'ssm_acc' },
-  { from: 'twitter', to: 'klfinance' },
-  { from: 'news', to: 'bizwire' },
-  { from: 'ssm_acc', to: 'mySSMtopic', label: 'posts about' },
-  { from: 'bizwire', to: 'shell', label: 'reports on' },
-  { from: 'klfinance', to: 'filing' },
-  { from: 'filing', to: 'penalty', label: 'triggers' },
-  { from: 'ssm', to: 'anwar', label: 'overseen by' },
-  { from: 'anwar', to: 'companiesact', label: 'mandates' },
-  { from: 'tiktok', to: 'mySSMtopic', label: 'amplifies' },
-  { from: 'mySSM', to: 'mySSMtopic' },
-  { from: 'shell', to: 'penalty', label: 'causes' },
+  // MOF oversees both regulators
+  { from: 'mof',          to: 'ssm',          label: 'oversees' },
+  { from: 'mof',          to: 'bnm',          label: 'oversees' },
+  // SSM cluster
+  { from: 'ssm',          to: 'companies_act',label: 'enforces' },
+  { from: 'ssm',          to: 'late_filing',  label: 'tracks' },
+  { from: 'ssm',          to: 'shell',        label: 'regulates' },
+  { from: 'ssm',          to: 'ssm_acc',      label: 'operates' },
+  { from: 'ssm',          to: 'audit_notice', label: 'issues' },
+  // BNM cluster
+  { from: 'bnm',          to: 'aml',          label: 'monitors' },
+  { from: 'bnm',          to: 'shell',        label: 'flags' },
+  { from: 'bnm',          to: 'bnm_report',   label: 'publishes' },
+  // Cross-cluster bridge
+  { from: 'ssm',          to: 'bnm',          label: 'coordinates' },
+  // Topic chain
+  { from: 'shell',        to: 'aml',          label: 'poses' },
+  { from: 'shell',        to: 'late_filing',  label: 'linked to' },
+  { from: 'late_filing',  to: 'penalty',      label: 'triggers' },
+  { from: 'companies_act',to: 'penalty',      label: 'specifies' },
+  // Platforms → Authors
+  { from: 'twitter',      to: 'ssm_acc' },
+  { from: 'twitter',      to: 'edge_acc' },
+  { from: 'twitter',      to: 'klfw' },
+  // Platforms → Posts
+  { from: 'the_edge',     to: 'audit_notice', label: 'covers' },
+  { from: 'bernama',      to: 'bnm_report',   label: 'reports' },
+  // Authors → Topics
+  { from: 'ssm_acc',      to: 'late_filing',  label: 'warns' },
+  { from: 'edge_acc',     to: 'shell',        label: 'reports on' },
+  { from: 'klfw',         to: 'aml',          label: 'covers' },
+  // TikTok amplifies
+  { from: 'tiktok',       to: 'shell',        label: 'amplifies' },
 ]
 
 export const issues: IssueResult[] = [

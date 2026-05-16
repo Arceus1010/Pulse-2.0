@@ -24,14 +24,14 @@ export function useAnalyticsFilters() {
     setParams(prev => {
       const next = new URLSearchParams(prev)
       if (updates.keywords !== undefined) {
-        updates.keywords.length ? next.set('kw', updates.keywords.join(',')) : next.delete('kw')
+        if (updates.keywords.length) next.set('kw', updates.keywords.join(','))
+        else next.delete('kw')
       }
       if (updates.dateFrom !== undefined) next.set('from', updates.dateFrom)
       if (updates.dateTo !== undefined) next.set('to', updates.dateTo)
       if (updates.platforms !== undefined) {
-        updates.platforms.length === ALL_PLATFORMS.length
-          ? next.delete('plat')
-          : next.set('plat', updates.platforms.join(','))
+        if (updates.platforms.length === ALL_PLATFORMS.length) next.delete('plat')
+        else next.set('plat', updates.platforms.join(','))
       }
       return next
     }, { replace: true })
