@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+.recharts-wrapper:focus,
+.recharts-wrapper svg:focus,
+.recharts-wrapper *:focus { outline: none; }
+
 * {
   font-family: 'Geist', sans-serif;
   scrollbar-width: thin;

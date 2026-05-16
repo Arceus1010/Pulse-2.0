@@ -59,6 +59,7 @@ export interface SentimentByPlatform {
 export interface SourceBreakdown {
   name: string
   posts: number
+  reach: number
   positive: number
   negative: number
   neutral: number

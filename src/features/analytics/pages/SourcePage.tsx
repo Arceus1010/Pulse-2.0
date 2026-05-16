@@ -1,34 +1,100 @@
 import { useState } from 'react'
-import DonutChart from '../components/charts/DonutChart'
-import { newsSources, socialSources, newsSourcePie, socialPlatformPie, newsAuthors, socialAuthors } from '../mock-data'
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { newsSources, socialSources, newsAuthors, socialAuthors } from '../mock-data'
+import { useChartTheme } from '../hooks/useChartTheme'
+import { SENTIMENT_COLORS } from '../constants'
 import type { Author, SourceBreakdown } from '../types'
 
 type SrcTab = 'news' | 'social'
 
-function SentimentBar({ pos, neg }: { pos: number; neg: number }) {
+function formatReach(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`
+  return String(n)
+}
+
+function SentimentBadge({ sentiment }: { sentiment: 'positive' | 'negative' | 'neutral' }) {
+  if (sentiment === 'negative')
+    return <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-medium">Negative</span>
+  if (sentiment === 'positive')
+    return <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-medium">Positive</span>
+  return <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 font-medium">Neutral</span>
+}
+
+function dominantSentiment(s: SourceBreakdown): 'positive' | 'negative' | 'neutral' {
+  const max = Math.max(s.positive, s.negative, s.neutral)
+  if (max === s.negative) return 'negative'
+  if (max === s.positive) return 'positive'
+  return 'neutral'
+}
+
+function SentimentStackedChart({ sources }: { sources: SourceBreakdown[] }) {
+  const theme = useChartTheme()
+
+  const data = [...sources]
+    .sort((a, b) => b.reach - a.reach)
+    .map(s => ({
+      name: s.name,
+      Positive: Math.round(s.posts * s.positive / 100),
+      Neutral: Math.round(s.posts * s.neutral / 100),
+      Negative: Math.round(s.posts * s.negative / 100),
+    }))
+
+  const h = Math.max(180, data.length * 44)
+
   return (
-    <div className="flex h-1.5 rounded-full overflow-hidden w-20">
-      <div style={{ width: `${pos}%`, background: '#22c55e' }} />
-      <div style={{ width: `${100 - pos - neg}%`, background: '#71717a' }} />
-      <div style={{ width: `${neg}%`, background: '#ef4444' }} />
-    </div>
+    <ResponsiveContainer width="100%" height={h}>
+      <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} horizontal={false} />
+        <XAxis
+          type="number"
+          tick={{ fill: theme.text, fontSize: 11 }}
+          axisLine={false}
+          tickLine={false}
+          tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
+        />
+        <YAxis
+          type="category"
+          dataKey="name"
+          width={120}
+          tick={{ fill: theme.text, fontSize: 11 }}
+          axisLine={false}
+          tickLine={false}
+        />
+        <Tooltip
+          cursor={{ fill: theme.cursor }}
+          contentStyle={{
+            backgroundColor: theme.tooltip.bg,
+            border: `1px solid ${theme.tooltip.border}`,
+            borderRadius: 6,
+            fontSize: 12,
+            color: theme.tooltip.text,
+          }}
+          labelStyle={{ color: theme.tooltip.label, fontSize: 11, marginBottom: 2 }}
+          itemStyle={{ color: theme.tooltip.text }}
+        />
+        <Bar dataKey="Positive" stackId="s" fill={SENTIMENT_COLORS.positive} maxBarSize={28} />
+        <Bar dataKey="Neutral"  stackId="s" fill={SENTIMENT_COLORS.neutral}  maxBarSize={28} />
+        <Bar dataKey="Negative" stackId="s" fill={SENTIMENT_COLORS.negative} maxBarSize={28} radius={[0, 4, 4, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
   )
 }
 
 function SourceList({ sources }: { sources: SourceBreakdown[] }) {
+  const sorted = [...sources].sort((a, b) => b.reach - a.reach)
   return (
     <ul className="divide-y divide-slate-100 dark:divide-zinc-800">
-      {sources.map(s => (
-        <li key={s.name} className="flex items-center justify-between px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer">
-          <div>
-            <p className="text-sm font-medium text-slate-800 dark:text-zinc-200">{s.name}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <SentimentBar pos={s.positive} neg={s.negative} />
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400">{s.positive}%</span>
-              <span className="text-[10px] text-red-500 dark:text-red-400">{s.negative}%</span>
-            </div>
+      {sorted.map((s, i) => (
+        <li key={s.name} className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
+          <span className="text-[11px] font-mono text-slate-400 dark:text-zinc-600 w-4 text-right shrink-0">{i + 1}</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-slate-800 dark:text-zinc-200 truncate">{s.name}</p>
+            <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">
+              {s.posts.toLocaleString()} posts · {formatReach(s.reach)} reach
+            </p>
           </div>
-          <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">{s.posts.toLocaleString()}</span>
+          <SentimentBadge sentiment={dominantSentiment(s)} />
         </li>
       ))}
     </ul>
@@ -39,10 +105,10 @@ function AuthorPanel({ authors, titlePrefix }: { authors: Author[]; titlePrefix:
   const [selected, setSelected] = useState<Author>(authors[0])
 
   return (
-    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
+    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden flex flex-col">
       <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800">
         <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
-          {titlePrefix} — {selected.name}
+          {titlePrefix}
         </h2>
       </div>
       <div className="divide-y divide-slate-100 dark:divide-zinc-800">
@@ -63,11 +129,17 @@ function AuthorPanel({ authors, titlePrefix }: { authors: Author[]; titlePrefix:
               <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100 truncate">{a.name}</p>
               <p className="text-[10px] text-slate-400 dark:text-zinc-500">{a.handle} · {a.platform}</p>
             </div>
-            <span className="text-[11px] font-mono text-slate-400 dark:text-zinc-500 shrink-0">{a.reach}</span>
+            <div className="flex flex-col items-end gap-1 shrink-0">
+              <span className="text-[11px] font-mono text-slate-400 dark:text-zinc-500">{a.reach}</span>
+              <SentimentBadge sentiment={a.sentiment} />
+            </div>
           </button>
         ))}
       </div>
-      <div className="px-4 py-3 border-t border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50">
+      <div className="flex-1 flex flex-col justify-center px-4 py-4 border-t border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1.5">
+          {selected.name} · Recent Statement
+        </p>
         <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed italic border-l-2 border-blue-300 dark:border-blue-700 pl-3">
           "{selected.recentStatement}"
         </p>
@@ -79,62 +151,71 @@ function AuthorPanel({ authors, titlePrefix }: { authors: Author[]; titlePrefix:
 export default function SourcePage() {
   const [tab, setTab] = useState<SrcTab>('news')
 
-  const sources = tab === 'news' ? newsSources : socialSources
-  const pieData = tab === 'news' ? newsSourcePie : socialPlatformPie
-  const authors = tab === 'news' ? newsAuthors : socialAuthors
-  const authorPrefix = tab === 'news' ? 'Top Authors' : 'Top Accounts'
+  const sources      = tab === 'news' ? newsSources  : socialSources
+  const authors      = tab === 'news' ? newsAuthors  : socialAuthors
+  const chartTitle   = tab === 'news' ? 'Posts by News Source' : 'Posts by Platform'
+  const listTitle    = tab === 'news' ? 'News Sources' : 'Platforms'
+  const authorTitle  = tab === 'news' ? 'Top Authors' : 'Top Accounts'
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Tabs */}
-      <div className="flex gap-1 border-b border-slate-200 dark:border-zinc-800">
-        {(['news', 'social'] as SrcTab[]).map(t => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2.5 text-xs font-medium border-b-2 -mb-px capitalize transition-colors ${
-              tab === t
-                ? 'border-blue-800 dark:border-blue-400 text-blue-800 dark:text-blue-400'
-                : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200'
-            }`}
-          >
-            {t === 'news' ? 'News' : 'Social Platforms'}
-          </button>
-        ))}
+      {/* Toggle */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-slate-500 dark:text-zinc-400">
+          {tab === 'news' ? 'Coverage from news outlets, ranked by audience reach.' : 'Conversation volume across social platforms, ranked by audience reach.'}
+        </p>
+        <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-zinc-800 rounded-lg p-1">
+          {(['news', 'social'] as SrcTab[]).map(t => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                tab === t
+                  ? 'bg-white dark:bg-zinc-700 text-slate-800 dark:text-zinc-100 shadow-sm'
+                  : 'text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200'
+              }`}
+            >
+              {t === 'news' ? 'News' : 'Social'}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        {/* Source list */}
+      {/* Chart */}
+      <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+            {chartTitle} — ranked by reach
+          </h2>
+          <div className="flex items-center gap-3">
+            {(['Positive', 'Neutral', 'Negative'] as const).map(label => (
+              <span key={label} className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
+                <span
+                  className="w-2 h-2 rounded-sm inline-block"
+                  style={{ background: SENTIMENT_COLORS[label.toLowerCase() as keyof typeof SENTIMENT_COLORS] }}
+                />
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="p-4">
+          <SentimentStackedChart sources={sources} />
+        </div>
+      </div>
+
+      {/* List + Authors */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800">
             <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
-              {tab === 'news' ? 'News Sources' : 'Social Platforms'}
+              {listTitle} — by reach
             </h2>
           </div>
           <SourceList sources={sources} />
         </div>
-
-        {/* Right col */}
-        <div className="lg:col-span-3 flex flex-col gap-4">
-          <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800">
-              <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
-                {tab === 'news' ? 'Mentions by Source' : 'Platform Share'}
-              </h2>
-            </div>
-            <div className="p-4">
-              <div className="flex flex-wrap gap-3 mb-3">
-                {pieData.map(d => (
-                  <span key={d.name} className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
-                    <span className="w-2 h-2 rounded-sm inline-block" style={{ background: d.color }} />
-                    {d.name}
-                  </span>
-                ))}
-              </div>
-              <DonutChart data={pieData} height={200} />
-            </div>
-          </div>
-          <AuthorPanel authors={authors} titlePrefix={authorPrefix} />
+        <div className="lg:col-span-3">
+          <AuthorPanel authors={authors} titlePrefix={authorTitle} />
         </div>
       </div>
     </div>
