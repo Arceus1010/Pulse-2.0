@@ -513,5 +513,5 @@ export const NODE_TYPE_COLORS: Record<string, string> = {
 }
 
 export const PESTLE_LETTER_DISPLAY: Record<string, string> = {
-  P: 'P', E: 'E', S: 'S', T: 'T', L: 'L', Env: 'E',
+  P: 'P', E: 'E', S: 'S', T: 'T', L: 'L', Env: 'En',
 }
