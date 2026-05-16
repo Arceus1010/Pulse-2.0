@@ -69,6 +69,10 @@ export interface StateData {
   state: string
   percentage: number
   mentions: number
+  delta: number
+  sentiment: { positive: number; negative: number; neutral: number }
+  topTopics: string[]
+  dominantPlatform: string
 }
 
 export interface Author {

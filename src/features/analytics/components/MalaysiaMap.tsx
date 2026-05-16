@@ -1,116 +1,152 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
 import type { StateData } from '../types'
+import { SENTIMENT_COLORS } from '../constants'
+import geographyData from '../data/malaysia-states.json'
 
 interface Props {
   data: StateData[]
+  viewMode: 'volume' | 'sentiment'
+  selected: string | null
+  onSelect: (state: string) => void
 }
 
-interface StateShape {
-  id: string
-  label: string
-  d: string
-  labelX: number
-  labelY: number
+const GEO_TO_STATE: Record<string, string> = {
+  'Pulau Pinang': 'Penang',
 }
 
-const SHAPES: StateShape[] = [
-  { id: 'perlis', label: 'Perlis', labelX: 147, labelY: 57, d: 'M 135 48 L 150 45 L 155 58 L 140 62 Z' },
-  { id: 'kedah', label: 'Kedah', labelX: 152, labelY: 78, d: 'M 130 58 L 160 48 L 175 80 L 155 100 L 130 90 Z' },
-  { id: 'penang', label: 'Penang', labelX: 130, labelY: 86, d: 'M 120 80 L 138 75 L 142 90 L 124 95 Z' },
-  { id: 'perak', label: 'Perak', labelX: 163, labelY: 120, d: 'M 140 90 L 175 78 L 190 130 L 160 150 L 138 140 Z' },
-  { id: 'kelantan', label: 'Kelantan', labelX: 213, labelY: 68, d: 'M 195 48 L 240 45 L 245 90 L 200 92 L 185 70 Z' },
-  { id: 'terengganu', label: 'Terengganu', labelX: 252, labelY: 87, d: 'M 240 60 L 270 65 L 265 115 L 240 110 L 238 90 Z' },
-  { id: 'pahang', label: 'Pahang', labelX: 225, labelY: 132, d: 'M 190 92 L 265 112 L 260 170 L 218 180 L 190 165 Z' },
-  { id: 'selangor', label: 'Selangor', labelX: 163, labelY: 172, d: 'M 145 148 L 178 138 L 192 165 L 185 192 L 158 198 L 142 175 Z' },
-  { id: 'kl', label: 'KL', labelX: 171, labelY: 169, d: 'M 162 160 L 178 158 L 180 175 L 164 177 Z' },
-  { id: 'ns', label: 'N.Sembilan', labelX: 174, labelY: 210, d: 'M 155 195 L 190 192 L 196 218 L 170 228 L 153 218 Z' },
-  { id: 'melaka', label: 'Melaka', labelX: 178, labelY: 232, d: 'M 163 226 L 190 220 L 194 238 L 167 242 Z' },
-  { id: 'johor', label: 'Johor', labelX: 207, labelY: 246, d: 'M 155 238 L 200 225 L 260 178 L 268 220 L 235 260 L 195 270 L 160 260 Z' },
-  { id: 'sabah', label: 'Sabah', labelX: 558, labelY: 125, d: 'M 510 80 L 590 70 L 620 110 L 600 155 L 560 170 L 510 155 L 500 120 Z' },
-  { id: 'sarawak', label: 'Sarawak', labelX: 443, labelY: 162, d: 'M 390 120 L 500 80 L 510 160 L 490 200 L 440 220 L 380 200 L 360 165 Z' },
-]
-
-function stateColor(pct: number, maxPct: number, hovered: boolean) {
+function volumeColor(pct: number, maxPct: number, hovered: boolean, selected: boolean): string {
+  if (pct === 0) return hovered ? 'rgba(148,163,184,0.25)' : 'rgba(148,163,184,0.10)'
   const a = pct / maxPct
-  if (hovered) return `rgba(59, 130, 246, ${0.4 + a * 0.55})`
-  return `rgba(59, 130, 246, ${0.08 + a * 0.72})`
+  if (selected) return `rgba(59, 130, 246, ${0.72 + a * 0.22})`
+  if (hovered)  return `rgba(59, 130, 246, ${0.52 + a * 0.38})`
+  return `rgba(59, 130, 246, ${0.12 + a * 0.62})`
 }
 
-export default function MalaysiaMap({ data }: Props) {
+function sentimentColor(sd: StateData | null, hovered: boolean, selected: boolean): string {
+  if (!sd) return hovered ? 'rgba(148,163,184,0.25)' : 'rgba(148,163,184,0.10)'
+  const net = sd.sentiment.positive - sd.sentiment.negative
+  const alpha = selected ? 0.88 : hovered ? 0.74 : 0.58
+  if (net >= 30) return `rgba(34, 197, 94, ${alpha})`
+  if (net >= 15) return `rgba(74, 222, 128, ${alpha})`
+  if (net >= 0)  return `rgba(134, 239, 172, ${alpha})`
+  if (net >= -15) return `rgba(252, 165, 165, ${alpha})`
+  return `rgba(239, 68, 68, ${alpha})`
+}
+
+export default function MalaysiaMap({ data, viewMode, selected, onSelect }: Props) {
   const [hovered, setHovered] = useState<string | null>(null)
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; pct: number; mentions: number } | null>(null)
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; sd: StateData } | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  const dataMap = Object.fromEntries(data.map(d => [d.state.toLowerCase().replace(/[.\s]/g, ''), d]))
-  const maxPct = Math.max(...data.map(d => d.percentage))
-
-  const getStateData = (id: string) => {
-    const key = id.replace(/[.\s]/g, '')
-    return dataMap[key] ?? dataMap['kl'] ?? null
-  }
+  const dataMap = Object.fromEntries(data.map(d => [d.state, d]))
+  const maxPct = Math.max(...data.filter(d => d.state !== 'Others').map(d => d.percentage))
 
   return (
-    <div className="relative w-full">
-      <svg viewBox="100 40 560 240" className="w-full" style={{ maxHeight: 360 }}>
-        {SHAPES.map(shape => {
-          const sd = getStateData(shape.id)
-          const pct = sd?.percentage ?? 0
-          const isHovered = hovered === shape.id
+    <div ref={containerRef} className="relative w-full">
+      <ComposableMap
+        projection="geoMercator"
+        projectionConfig={{ scale: 2300, center: [109.5, 4.0] }}
+        width={800}
+        height={350}
+        style={{ width: '100%', height: 'auto' }}
+      >
+        <Geographies geography={geographyData}>
+          {({ geographies }) =>
+            geographies.map((geo) => {
+              const geoName = geo.properties.name as string
+              const stateName = GEO_TO_STATE[geoName] ?? geoName
+              const sd = dataMap[stateName] ?? null
+              const pct = sd?.percentage ?? 0
+              const isHovered = hovered === geoName
+              const isSelected = !!sd && sd.state === selected
 
-          return (
-            <g key={shape.id}>
-              <path
-                d={shape.d}
-                fill={stateColor(pct, maxPct, isHovered)}
-                stroke={isHovered ? '#3b82f6' : '#71717a'}
-                strokeWidth={isHovered ? 1.5 : 0.8}
-                strokeOpacity={isHovered ? 0.8 : 0.4}
-                className="cursor-pointer transition-all duration-150"
-                onMouseEnter={e => {
-                  setHovered(shape.id)
-                  const rect = (e.currentTarget as SVGElement).closest('svg')!.getBoundingClientRect()
-                  setTooltip({ x: e.clientX - rect.left, y: e.clientY - rect.top, label: shape.label, pct, mentions: sd?.mentions ?? 0 })
-                }}
-                onMouseMove={e => {
-                  const rect = (e.currentTarget as SVGElement).closest('svg')!.getBoundingClientRect()
-                  setTooltip(t => t ? { ...t, x: e.clientX - rect.left, y: e.clientY - rect.top } : null)
-                }}
-                onMouseLeave={() => { setHovered(null); setTooltip(null) }}
-              />
-              {pct >= 4 && (
-                <text
-                  x={shape.labelX}
-                  y={shape.labelY}
-                  textAnchor="middle"
-                  fontSize={6.5}
-                  fill={isHovered ? '#fff' : 'rgba(255,255,255,0.7)'}
-                  style={{ pointerEvents: 'none', fontFamily: 'inherit' }}
-                >
-                  {shape.label}
-                </text>
-              )}
-            </g>
-          )
-        })}
+              const fill = viewMode === 'sentiment'
+                ? sentimentColor(sd, isHovered, isSelected)
+                : volumeColor(pct, maxPct, isHovered, isSelected)
 
-        {/* Legend */}
-        {['Low', 'Mid', 'High'].map((lbl, i) => {
-          const a = (i + 1) / 3
-          return (
-            <g key={lbl}>
-              <rect x={100 + i * 44} y={266} width={38} height={9} rx={2} fill={`rgba(59, 130, 246, ${0.1 + a * 0.7})`} />
-              <text x={119 + i * 44} y={282} textAnchor="middle" fontSize={6.5} fill="#71717a" style={{ fontFamily: 'inherit' }}>{lbl}</text>
-            </g>
-          )
-        })}
-      </svg>
+              return (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  fill={fill}
+                  stroke={isSelected ? '#3b82f6' : isHovered ? '#94a3b8' : '#71717a'}
+                  strokeWidth={isSelected ? 1.5 : isHovered ? 1 : 0.5}
+                  strokeOpacity={isSelected ? 1 : isHovered ? 0.8 : 0.35}
+                  style={{
+                    default: { outline: 'none', cursor: sd ? 'pointer' : 'default', transition: 'fill 0.25s ease' },
+                    hover:   { outline: 'none' },
+                    pressed: { outline: 'none' },
+                  }}
+                  onClick={() => { if (sd) onSelect(sd.state) }}
+                  onMouseEnter={(e) => {
+                    if (!sd) return
+                    setHovered(geoName)
+                    const rect = containerRef.current?.getBoundingClientRect()
+                    if (rect) setTooltip({ x: e.clientX - rect.left, y: e.clientY - rect.top, sd })
+                  }}
+                  onMouseMove={(e) => {
+                    const rect = containerRef.current?.getBoundingClientRect()
+                    if (rect) setTooltip(t => t ? { ...t, x: e.clientX - rect.left, y: e.clientY - rect.top } : null)
+                  }}
+                  onMouseLeave={() => { setHovered(null); setTooltip(null) }}
+                />
+              )
+            })
+          }
+        </Geographies>
+      </ComposableMap>
 
+      {/* Legend */}
+      <div className="flex items-center gap-4 mt-1 px-1">
+        {viewMode === 'volume' ? (
+          ['Low', 'Mid', 'High'].map((lbl, i) => {
+            const a = (i + 1) / 3
+            return (
+              <div key={lbl} className="flex items-center gap-1.5">
+                <div className="w-6 h-2 rounded-sm" style={{ background: `rgba(59, 130, 246, ${0.12 + a * 0.68})` }} />
+                <span className="text-[10px] text-slate-500 dark:text-zinc-400">{lbl}</span>
+              </div>
+            )
+          })
+        ) : (
+          [
+            { label: 'Positive', color: 'rgba(34, 197, 94, 0.65)' },
+            { label: 'Neutral',  color: 'rgba(134, 239, 172, 0.6)' },
+            { label: 'Negative', color: 'rgba(239, 68, 68, 0.65)' },
+          ].map(item => (
+            <div key={item.label} className="flex items-center gap-1.5">
+              <div className="w-6 h-2 rounded-sm" style={{ background: item.color }} />
+              <span className="text-[10px] text-slate-500 dark:text-zinc-400">{item.label}</span>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Tooltip */}
       {tooltip && (
         <div
-          className="absolute z-10 pointer-events-none bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-md px-3 py-2 text-xs shadow-lg"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 8 }}
+          className="absolute z-10 pointer-events-none bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 shadow-xl"
+          style={{ left: tooltip.x + 14, top: tooltip.y - 12, minWidth: 168 }}
         >
-          <p className="font-semibold text-slate-900 dark:text-zinc-100">{tooltip.label}</p>
-          <p className="text-slate-500 dark:text-zinc-400">{tooltip.pct}% · {tooltip.mentions.toLocaleString()} mentions</p>
+          <div className="flex items-center justify-between gap-3 mb-1">
+            <p className="text-xs font-semibold text-slate-900 dark:text-zinc-100">{tooltip.sd.state}</p>
+            <span className={`text-[10px] font-semibold ${tooltip.sd.delta >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
+              {tooltip.sd.delta >= 0 ? '+' : ''}{tooltip.sd.delta}%
+            </span>
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-zinc-400 mb-2">
+            {tooltip.sd.mentions.toLocaleString()} mentions · {tooltip.sd.percentage}%
+          </p>
+          <div className="flex h-1.5 rounded-full overflow-hidden">
+            <div style={{ width: `${tooltip.sd.sentiment.positive}%`, background: SENTIMENT_COLORS.positive }} />
+            <div style={{ width: `${tooltip.sd.sentiment.neutral}%`,  background: SENTIMENT_COLORS.neutral }} />
+            <div style={{ width: `${tooltip.sd.sentiment.negative}%`, background: SENTIMENT_COLORS.negative }} />
+          </div>
+          <div className="flex justify-between mt-1">
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400">{tooltip.sd.sentiment.positive}% pos</span>
+            <span className="text-[10px] text-red-500 dark:text-red-400">{tooltip.sd.sentiment.negative}% neg</span>
+          </div>
         </div>
       )}
     </div>
