@@ -9,7 +9,7 @@ interface Segment {
 
 interface Props {
   data: Segment[]
-  height?: number
+  height?: number | `${number}%`
   defaultColor?: string
   valueFormatter?: (v: number) => string
 }
