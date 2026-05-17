@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import DonutChart from '../components/charts/DonutChart'
 import HorizontalBar from '../components/charts/HorizontalBar'
 import EntityRelationGraph from '../components/charts/EntityRelationGraph'
 import SectionCard from '../../../components/ui/SectionCard'
-import { topicClusters, shareOfVoice, languageBreakdown, strongestRelations } from '../mock-data/trend'
+import FilterChips from '../../../components/ui/FilterChips'
+import { topicClusters, shareOfVoice, languageBreakdown, strongestRelations, entityNodes } from '../mock-data/trend'
 import { CHART_COLORS, NODE_TYPE_COLORS } from '../constants'
 
 const CLUSTER_CLASSES: Record<string, string> = {
@@ -43,22 +44,20 @@ export default function TrendPage() {
   const sovData = shareOfVoice.map((d, i) => ({ name: d.name, value: d.value, color: SOV_COLORS[i] }))
   const sortedClusters = [...topicClusters].sort((a, b) => b.count - a.count)
 
-  const erdFilterLegend = (
-    <div className="flex flex-wrap gap-x-4 gap-y-1">
-      {allTypes.map(type => (
-        <button
-          key={type}
-          onClick={() => toggleType(type)}
-          className={`flex items-center gap-1.5 text-[11px] capitalize cursor-pointer transition-opacity ${
-            activeTypes.has(type) ? 'opacity-100' : 'opacity-25'
-          }`}
-        >
-          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: NODE_TYPE_COLORS[type] }} />
-          <span className="text-slate-600 dark:text-zinc-400">{type}</span>
-        </button>
-      ))}
-    </div>
+  const nodeCountByType = useMemo(
+    () => entityNodes.reduce<Record<string, number>>((acc, n) => {
+      acc[n.type] = (acc[n.type] ?? 0) + 1
+      return acc
+    }, {}),
+    []
   )
+
+  const filterItems = allTypes.map(type => ({
+    value: type,
+    label: type,
+    color: NODE_TYPE_COLORS[type],
+    count: nodeCountByType[type] ?? 0,
+  }))
 
   return (
     <div className="flex flex-col gap-5">
@@ -87,9 +86,19 @@ export default function TrendPage() {
       {/* Row 2: ERD (2/3) + Strongest Relationships + Topic Clusters (1/3) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <SectionCard title="Entity Relationship Diagram" action={erdFilterLegend}>
-            <div className="bg-slate-50 dark:bg-zinc-950 rounded-lg overflow-hidden">
-              <EntityRelationGraph activeTypes={activeTypes} />
+          <SectionCard title="Entity Relationship Diagram" contentClassName="p-0">
+            <div className="px-4 py-2.5 border-b border-slate-100 dark:border-zinc-800">
+              <FilterChips
+                label="Filter"
+                items={filterItems}
+                active={Array.from(activeTypes)}
+                onToggle={toggleType}
+              />
+            </div>
+            <div className="p-4">
+              <div className="bg-slate-50 dark:bg-zinc-950 rounded-lg overflow-hidden">
+                <EntityRelationGraph activeTypes={activeTypes} />
+              </div>
             </div>
           </SectionCard>
         </div>

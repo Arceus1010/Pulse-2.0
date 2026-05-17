@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# Pulse
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**From raw signal to actionable intelligence.**
 
-Currently, two official plugins are available:
+Pulse is an open-source intelligence and analytics dashboard that gives analysts a unified view across social monitoring, OSINT investigation, analytics, and AI-driven reasoning — without switching tools.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Pillar | Description |
+|---|---|
+| **Social & News Monitoring** | Aggregate content from Facebook, Instagram, YouTube, TikTok, X, and news APIs. Filter by keyword, date range, and platform in real time. |
+| **OSINT Investigation** | Deep reconnaissance on people, companies, domains, emails, and IPs. Cross-reference public databases, threat feeds, breach records, and dark web sources. |
+| **Analytics** | Sentiment trends, entity tracking, topic modeling, and engagement dashboards derived from collected data — all in one unified view. |
+| **AI Reasoning** | AI-driven analysis and decision support layered on top of collected data. Move from raw signals to actionable intelligence conclusions automatically. |
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **React 19** + **TypeScript**
+- **React Router 7**
+- **Vite** (with Rolldown)
+- **Tailwind CSS 4**
+- **Recharts** — line, bar, radar, and donut charts
+- **react-force-graph-2d** — entity relation graphs
+- **react-simple-maps** — geographic map views
+- **react-grid-heatmap** — heatmap visualisation
+- **lucide-react** — icons
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview the production build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── components/          # Shared layout and UI primitives
+├── features/            # Feature modules (pages, components, hooks, data)
+├── context/             # React context providers
+├── hooks/               # Shared custom hooks
+├── assets/
+├── App.tsx              # Landing page
+├── AppRouter.tsx        # Route configuration
+└── main.tsx
+```
+
+---
+
+## Dark Mode
+
+Pulse ships with a built-in dark/light mode toggle. Theme state is managed via `ThemeContext` and persisted across sessions.
