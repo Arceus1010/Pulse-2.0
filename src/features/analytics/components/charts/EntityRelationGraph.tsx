@@ -3,7 +3,8 @@ import ForceGraph2D from 'react-force-graph-2d'
 import type { ForceGraphMethods, NodeObject, LinkObject } from 'react-force-graph-2d'
 // NodeObject / LinkObject use default generics ({}) whose index sig covers custom fields
 
-import { entityNodes, entityEdges, NODE_TYPE_COLORS } from '../../mock-data'
+import { entityNodes, entityEdges } from '../../mock-data/trend'
+import { NODE_TYPE_COLORS } from '../../constants'
 import { useChartTheme } from '../../hooks/useChartTheme'
 import { useTheme } from '../../../../hooks/useTheme'
 

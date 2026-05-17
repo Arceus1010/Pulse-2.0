@@ -1,7 +1,6 @@
 import { ChevronRight } from 'lucide-react'
 import type { PestleEntry } from '../types'
-import { PESTLE_COLORS } from '../constants'
-import { PESTLE_LETTER_DISPLAY } from '../mock-data'
+import { PESTLE_COLORS, PESTLE_LETTER_DISPLAY } from '../constants'
 
 interface Props {
   entry: PestleEntry

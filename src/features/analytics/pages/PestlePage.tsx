@@ -3,17 +3,15 @@ import { X, TrendingUp, TrendingDown, Minus, AlertTriangle } from 'lucide-react'
 import PestleCard from '../components/PestleCard'
 import AnalyticsRadar from '../components/charts/AnalyticsRadar'
 import TrendLineChart from '../components/charts/TrendLineChart'
-import { pestleData, radarData, pestleTrend } from '../mock-data'
+import SentimentBadge from '../components/SentimentBadge'
+import SectionCard from '../../../components/ui/SectionCard'
+import ProgressBar from '../../../components/ui/ProgressBar'
+import Legend from '../../../components/ui/Legend'
+import { pestleData, radarData, pestleTrend } from '../mock-data/pestle'
 import { PESTLE_COLORS } from '../constants'
 import type { PestleEntry } from '../types'
 
 // ── Constants ────────────────────────────────────────────────────────────────
-
-const SENTINEL_COLORS = {
-  positive: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400',
-  negative: 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400',
-  neutral: 'bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400',
-}
 
 const DIM_NAME_TO_KEY: Record<string, string> = {
   Political: 'P', Economic: 'E', Social: 'S',
@@ -21,43 +19,39 @@ const DIM_NAME_TO_KEY: Record<string, string> = {
 }
 
 const PESTLE_TREND_LINES = [
-  { key: 'P',   color: PESTLE_COLORS.P,   label: 'Political' },
-  { key: 'E',   color: PESTLE_COLORS.E,   label: 'Economic' },
-  { key: 'S',   color: PESTLE_COLORS.S,   label: 'Social' },
+  { key: 'P',   color: PESTLE_COLORS.P,   label: 'Political'     },
+  { key: 'E',   color: PESTLE_COLORS.E,   label: 'Economic'      },
+  { key: 'S',   color: PESTLE_COLORS.S,   label: 'Social'        },
   { key: 'T',   color: PESTLE_COLORS.T,   label: 'Technological' },
-  { key: 'L',   color: PESTLE_COLORS.L,   label: 'Legal' },
+  { key: 'L',   color: PESTLE_COLORS.L,   label: 'Legal'         },
   { key: 'Env', color: PESTLE_COLORS.Env, label: 'Environmental' },
 ]
 
 // ── Derived values (static, computed once) ───────────────────────────────────
 
-const TOTAL_POSTS = pestleData.reduce((sum, e) => sum + e.count, 0)
+const TOTAL_POSTS   = pestleData.reduce((sum, e) => sum + e.count, 0)
 const MAX_PERCENTAGE = Math.max(...pestleData.map(e => e.percentage))
-const DOMINANT_DIM = pestleData.reduce((a, b) => a.count > b.count ? a : b)
+const DOMINANT_DIM  = pestleData.reduce((a, b) => a.count > b.count ? a : b)
 
 const radarInsights = radarData
   .map(d => ({
-    dim: d.dim,
-    key: DIM_NAME_TO_KEY[d.dim] ?? 'P',
+    dim:      d.dim,
+    key:      DIM_NAME_TO_KEY[d.dim] ?? 'P',
     positive: d.positive,
     negative: d.negative,
-    net: d.positive - d.negative,
+    net:      d.positive - d.negative,
   }))
-  .sort((a, b) => a.net - b.net) // ascending: highest risk first
+  .sort((a, b) => a.net - b.net)
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-type RiskInfo = {
-  label: string
-  className: string
-  Icon: typeof TrendingUp
-}
+type RiskInfo = { label: string; className: string; Icon: typeof TrendingUp }
 
 function getRiskInfo(net: number): RiskInfo {
-  if (net <= -30) return { label: 'High risk',      className: 'text-red-500',              Icon: AlertTriangle }
-  if (net <= 0)   return { label: 'Elevated risk',  className: 'text-amber-500',            Icon: TrendingDown }
-  if (net <= 20)  return { label: 'Mixed',          className: 'text-slate-400 dark:text-zinc-400', Icon: Minus }
-  return            { label: 'Opportunity',   className: 'text-emerald-500',          Icon: TrendingUp }
+  if (net <= -30) return { label: 'High risk',     className: 'text-red-500',                              Icon: AlertTriangle }
+  if (net <= 0)   return { label: 'Elevated risk', className: 'text-amber-500',                            Icon: TrendingDown  }
+  if (net <= 20)  return { label: 'Mixed',         className: 'text-slate-400 dark:text-zinc-400',         Icon: Minus        }
+  return            { label: 'Opportunity',  className: 'text-emerald-500',                          Icon: TrendingUp   }
 }
 
 // ── Detail panel ─────────────────────────────────────────────────────────────
@@ -81,10 +75,7 @@ function PestleDetail({ entry, onClose }: { entry: PestleEntry; onClose: () => v
         style={{ borderLeftWidth: 3, borderLeftColor: color }}
       >
         <div className="flex items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-md flex items-center justify-center text-white text-sm font-bold shrink-0"
-            style={{ background: color }}
-          >
+          <div className="w-8 h-8 rounded-md flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ background: color }}>
             {letter}
           </div>
           <div>
@@ -120,24 +111,21 @@ function PestleDetail({ entry, onClose }: { entry: PestleEntry; onClose: () => v
               <span className="text-red-500 dark:text-red-400">−{radar.negative} negative</span>
             </div>
           </div>
-          <div className="h-2 rounded-full overflow-hidden flex bg-slate-200 dark:bg-zinc-700">
-            <div
-              className="h-full bg-emerald-400 dark:bg-emerald-500 transition-all duration-500"
-              style={{ width: `${posWidth}%` }}
-            />
-            <div
-              className="h-full bg-red-400 dark:bg-red-500 transition-all duration-500"
-              style={{ width: `${negWidth}%` }}
-            />
-          </div>
+          <ProgressBar
+            segments={[
+              { width: posWidth, color: '#34d399' },
+              { width: negWidth, color: '#f87171' },
+            ]}
+            height={8}
+            animated
+            className="bg-slate-200 dark:bg-zinc-700"
+          />
         </div>
       )}
 
       {/* Insight */}
       <div className="p-4 border-b border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/20">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-2">
-          Key Insight
-        </p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-2">Key Insight</p>
         <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{entry.insight}</p>
       </div>
 
@@ -155,9 +143,7 @@ function PestleDetail({ entry, onClose }: { entry: PestleEntry; onClose: () => v
               </span>
             </div>
             <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{post.text}</p>
-            <span className={`self-start px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${SENTINEL_COLORS[post.sentiment]}`}>
-              {post.sentiment}
-            </span>
+            <SentimentBadge sentiment={post.sentiment} className="self-start" />
           </div>
         ))}
       </div>
@@ -170,13 +156,18 @@ function PestleDetail({ entry, onClose }: { entry: PestleEntry; onClose: () => v
 export default function PestlePage() {
   const [active, setActive] = useState<PestleEntry | null>(null)
 
+  const radarLegendItems = [
+    { label: 'Negative', color: '#f87171', shape: 'line' as const },
+    { label: 'Positive', color: '#60a5fa', shape: 'line' as const, dashed: true },
+  ]
+
   return (
     <div className="flex flex-col gap-6">
 
       {/* Summary strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Classified Posts',  value: TOTAL_POSTS.toLocaleString() },
+          { label: 'Classified Posts',   value: TOTAL_POSTS.toLocaleString() },
           { label: 'Dominant Dimension', value: `${DOMINANT_DIM.name} · ${DOMINANT_DIM.percentage}%` },
           { label: 'Highest Risk',       value: radarInsights[0].dim },
           { label: 'Top Opportunity',    value: radarInsights[radarInsights.length - 1].dim },
@@ -199,9 +190,7 @@ export default function PestlePage() {
           <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
             PESTLE Breakdown
           </h2>
-          <span className="text-[10px] text-slate-400 dark:text-zinc-500">
-            Select a dimension to explore ↓
-          </span>
+          <span className="text-[10px] text-slate-400 dark:text-zinc-500">Select a dimension to explore ↓</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {pestleData.map(entry => (
@@ -220,26 +209,13 @@ export default function PestlePage() {
       {active && <PestleDetail entry={active} onClose={() => setActive(null)} />}
 
       {/* Radar */}
-      <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-        <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
-          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
-            Risk vs Opportunity — Sentiment per Dimension
-          </h2>
-          <div className="hidden sm:flex items-center gap-4 text-[10px] text-slate-400 dark:text-zinc-500">
-            <span className="flex items-center gap-1.5">
-              <span className="w-5 h-0.5 inline-block rounded bg-red-400" />
-              Negative
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-5 h-0.5 inline-block rounded border-t-2 border-dashed border-blue-400" />
-              Positive
-            </span>
-          </div>
-        </div>
-        <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <SectionCard
+        title="Risk vs Opportunity — Sentiment per Dimension"
+        action={<Legend items={radarLegendItems} className="hidden sm:flex" />}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <AnalyticsRadar data={radarData} height={280} />
 
-          {/* Data-driven legend — sorted by risk (worst first) */}
           <div className="flex flex-col gap-2 justify-center">
             {radarInsights.map(item => {
               const dimColor  = PESTLE_COLORS[item.key]
@@ -261,48 +237,31 @@ export default function PestlePage() {
                       <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200">{item.dim}</span>
                       <span className={`text-[10px] font-semibold ${riskClass}`}>{riskLabel}</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-slate-100 dark:bg-zinc-800 overflow-hidden flex">
-                      <div
-                        className="h-full bg-emerald-400 dark:bg-emerald-500 transition-all duration-500"
-                        style={{ width: `${posW}%` }}
-                      />
-                      <div
-                        className="h-full bg-red-400 dark:bg-red-500 transition-all duration-500"
-                        style={{ width: `${negW}%` }}
-                      />
-                    </div>
+                    <ProgressBar
+                      segments={[
+                        { width: posW, color: '#34d399' },
+                        { width: negW, color: '#f87171' },
+                      ]}
+                      height={6}
+                      animated
+                      className="bg-slate-100 dark:bg-zinc-800"
+                    />
                   </div>
                 </div>
               )
             })}
           </div>
         </div>
-      </div>
+      </SectionCard>
 
       {/* Monthly trend */}
-      <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-        <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800">
-          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
-            PESTLE Trend — Monthly Volume
-          </h2>
-        </div>
-        <div className="p-4">
-          <div className="flex flex-wrap gap-4 mb-3">
-            {PESTLE_TREND_LINES.map(l => (
-              <span key={l.key} className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
-                <span className="w-5 h-0.5 inline-block rounded" style={{ background: l.color }} />
-                {l.label}
-              </span>
-            ))}
-          </div>
-          <TrendLineChart
-            data={pestleTrend}
-            xKey="month"
-            lines={PESTLE_TREND_LINES}
-            height={260}
-          />
-        </div>
-      </div>
+      <SectionCard title="PESTLE Trend — Monthly Volume">
+        <Legend
+          items={PESTLE_TREND_LINES.map(l => ({ label: l.label, color: l.color, shape: 'line' as const }))}
+          className="mb-3"
+        />
+        <TrendLineChart data={pestleTrend} xKey="month" lines={PESTLE_TREND_LINES} height={260} />
+      </SectionCard>
 
     </div>
   )

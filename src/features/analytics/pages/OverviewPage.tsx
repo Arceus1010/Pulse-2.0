@@ -1,120 +1,63 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import KPICard from '../components/KPICard'
 import PostCard from '../components/PostCard'
 import TrendLineChart from '../components/charts/TrendLineChart'
 import DonutChart from '../components/charts/DonutChart'
 import PostingHeatmap from '../components/charts/PostingHeatmap'
-import {
-  kpiMetrics, topPosts, trendData, trendByPlatform, likesData, sharesData,
-  sourceBreakdown,
-} from '../mock-data'
+import TabBar from '../../../components/ui/TabBar'
+import SectionCard from '../../../components/ui/SectionCard'
+import Legend from '../../../components/ui/Legend'
+import { kpiMetrics, topPosts, trendData, trendByPlatform, likesData, sharesData, sourceBreakdown } from '../mock-data/overview'
 import { CHART_COLORS } from '../constants'
 
 const KPI_ITEMS = [
-  { label: 'Total Mentions', value: kpiMetrics.totalMentions.toLocaleString(), delta: kpiMetrics.totalMentionsDelta },
-  { label: 'Total Posts', value: kpiMetrics.totalPosts.toLocaleString(), delta: kpiMetrics.totalPostsDelta },
-  { label: 'Total Reach', value: kpiMetrics.totalReach.toLocaleString(), delta: kpiMetrics.totalReachDelta },
-  { label: 'Engagements', value: kpiMetrics.engagements.toLocaleString(), delta: kpiMetrics.engagementsDelta },
-  { label: 'Sentiment Score', value: kpiMetrics.sentimentScore, delta: kpiMetrics.sentimentScoreDelta, unit: '/ 100' },
-  { label: 'Unique Authors', value: kpiMetrics.uniqueAuthors.toLocaleString(), delta: kpiMetrics.uniqueAuthorsDelta },
+  { label: 'Total Mentions',  value: kpiMetrics.totalMentions.toLocaleString(),  delta: kpiMetrics.totalMentionsDelta  },
+  { label: 'Total Posts',     value: kpiMetrics.totalPosts.toLocaleString(),     delta: kpiMetrics.totalPostsDelta     },
+  { label: 'Total Reach',     value: kpiMetrics.totalReach.toLocaleString(),     delta: kpiMetrics.totalReachDelta     },
+  { label: 'Engagements',     value: kpiMetrics.engagements.toLocaleString(),    delta: kpiMetrics.engagementsDelta    },
+  { label: 'Sentiment Score', value: kpiMetrics.sentimentScore,                  delta: kpiMetrics.sentimentScoreDelta, unit: '/ 100' },
+  { label: 'Unique Authors',  value: kpiMetrics.uniqueAuthors.toLocaleString(),  delta: kpiMetrics.uniqueAuthorsDelta  },
 ]
 
 const TREND_OPTIONS = [
-  { value: 'overtime', label: 'Over Time' },
+  { value: 'overtime', label: 'Over Time'   },
   { value: 'platform', label: 'By Platform' },
-  { value: 'likes', label: 'Likes' },
-  { value: 'shares', label: 'Shares' },
+  { value: 'likes',    label: 'Likes'       },
+  { value: 'shares',   label: 'Shares'      },
 ]
 
 const POST_SORT_OPTIONS = [
   { value: 'engagement', label: 'Engagement' },
-  { value: 'reach', label: 'Reach' },
-  { value: 'sentiment', label: 'Sentiment' },
+  { value: 'reach',      label: 'Reach'      },
+  { value: 'sentiment',  label: 'Sentiment'  },
 ]
 
-function TabBar({ options, value, onChange }: { options: { value: string; label: string }[]; value: string; onChange: (v: string) => void }) {
-  return (
-    <div className="flex gap-0.5 bg-slate-100 dark:bg-zinc-800 rounded-md p-0.5">
-      {options.map(o => (
-        <button
-          key={o.value}
-          onClick={() => onChange(o.value)}
-          className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors whitespace-nowrap ${
-            value === o.value
-              ? 'bg-white dark:bg-zinc-700 text-slate-800 dark:text-zinc-100 shadow-sm'
-              : 'text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200'
-          }`}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-function LegendDot({ color, label, dashed }: { color: string; label: string; dashed?: boolean }) {
-  return (
-    <span className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
-      <span
-        className="w-5 h-0.5 rounded-full inline-block"
-        style={{ background: color, borderTop: dashed ? `2px dashed ${color}` : undefined, height: dashed ? 0 : undefined }}
-      />
-      {label}
-    </span>
-  )
-}
-
-function TrendLegend({ type }: { type: string }) {
-  if (type === 'overtime') return (
-    <div className="flex gap-4 mb-3">
-      <LegendDot color={CHART_COLORS.blue} label="Engagements" />
-      <LegendDot color={CHART_COLORS.green} label="Reach" dashed />
-    </div>
-  )
-  if (type === 'platform') return (
-    <div className="flex gap-4 mb-3">
-      <LegendDot color={CHART_COLORS.blue} label="Posts by platform" />
-    </div>
-  )
-  if (type === 'likes') return (
-    <div className="flex gap-4 mb-3">
-      <LegendDot color={CHART_COLORS.pink} label="Likes over time" />
-    </div>
-  )
-  return (
-    <div className="flex gap-4 mb-3">
-      <LegendDot color={CHART_COLORS.amber} label="Shares over time" />
-    </div>
-  )
-}
-
-function SectionCard({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
-  return (
-    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-      <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-4">
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400 shrink-0">{title}</h2>
-        {action}
-      </div>
-      <div className="p-4">{children}</div>
-    </div>
-  )
+const TREND_LEGENDS: Record<string, { label: string; color: string; dashed?: boolean }[]> = {
+  overtime: [
+    { label: 'Engagements', color: CHART_COLORS.blue },
+    { label: 'Reach',       color: CHART_COLORS.green, dashed: true },
+  ],
+  platform: [{ label: 'Posts by platform', color: CHART_COLORS.blue  }],
+  likes:    [{ label: 'Likes over time',   color: CHART_COLORS.pink  }],
+  shares:   [{ label: 'Shares over time',  color: CHART_COLORS.amber }],
 }
 
 export default function OverviewPage() {
   const [trendType, setTrendType] = useState('overtime')
   const [postSort, setPostSort] = useState('engagement')
 
-  const sortedPosts = [...topPosts].sort((a, b) => {
-    if (postSort === 'reach') return b.reach - a.reach
+  const trendChartData = useMemo(() => {
+    if (trendType === 'platform') return trendByPlatform
+    if (trendType === 'likes')    return likesData
+    if (trendType === 'shares')   return sharesData
+    return trendData
+  }, [trendType])
+
+  const sortedPosts = useMemo(() => [...topPosts].sort((a, b) => {
+    if (postSort === 'reach')     return b.reach - a.reach
     if (postSort === 'sentiment') return a.sentiment.localeCompare(b.sentiment)
     return (b.likes + b.shares) - (a.likes + a.shares)
-  })
-
-  const trendChartData =
-    trendType === 'platform' ? trendByPlatform
-    : trendType === 'likes' ? likesData
-    : trendType === 'shares' ? sharesData
-    : trendData
+  }), [postSort])
 
   return (
     <div className="flex flex-col gap-5">
@@ -132,13 +75,13 @@ export default function OverviewPage() {
             title="Engagement Trend"
             action={<TabBar options={TREND_OPTIONS} value={trendType} onChange={setTrendType} />}
           >
-            <TrendLegend type={trendType} />
+            <Legend items={TREND_LEGENDS[trendType].map(l => ({ ...l, shape: 'line' as const }))} className="mb-3" />
             {trendType === 'overtime' && (
               <TrendLineChart
                 data={trendChartData}
                 lines={[
-                  { key: 'engagements', color: CHART_COLORS.blue, label: 'Engagements' },
-                  { key: 'reach', color: CHART_COLORS.green, dashed: true, label: 'Reach' },
+                  { key: 'engagements', color: CHART_COLORS.blue,  label: 'Engagements' },
+                  { key: 'reach',       color: CHART_COLORS.green, dashed: true, label: 'Reach' },
                 ]}
                 height={260}
               />
@@ -189,7 +132,7 @@ export default function OverviewPage() {
         </div>
       </SectionCard>
 
-      {/* Peak Posting Times — full width for heatmap legibility */}
+      {/* Peak Posting Times */}
       <SectionCard title="Peak Posting Times">
         <PostingHeatmap />
       </SectionCard>

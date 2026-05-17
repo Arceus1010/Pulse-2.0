@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
-import { newsSources, socialSources, newsAuthors, socialAuthors } from '../mock-data'
+import SentimentBadge from '../components/SentimentBadge'
+import Avatar from '../../../components/ui/Avatar'
+import { newsSources, socialSources, newsAuthors, socialAuthors } from '../mock-data/source'
 import { useChartTheme } from '../hooks/useChartTheme'
 import { SENTIMENT_COLORS } from '../constants'
 import type { Author, SourceBreakdown } from '../types'
@@ -9,16 +11,8 @@ type SrcTab = 'news' | 'social'
 
 function formatReach(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(0)}k`
   return String(n)
-}
-
-function SentimentBadge({ sentiment }: { sentiment: 'positive' | 'negative' | 'neutral' }) {
-  if (sentiment === 'negative')
-    return <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-medium">Negative</span>
-  if (sentiment === 'positive')
-    return <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-medium">Positive</span>
-  return <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 font-medium">Neutral</span>
 }
 
 function dominantSentiment(s: SourceBreakdown): 'positive' | 'negative' | 'neutral' {
@@ -34,9 +28,9 @@ function SentimentStackedChart({ sources }: { sources: SourceBreakdown[] }) {
   const data = [...sources]
     .sort((a, b) => b.reach - a.reach)
     .map(s => ({
-      name: s.name,
+      name:     s.name,
       Positive: Math.round(s.posts * s.positive / 100),
-      Neutral: Math.round(s.posts * s.neutral / 100),
+      Neutral:  Math.round(s.posts * s.neutral  / 100),
       Negative: Math.round(s.posts * s.negative / 100),
     }))
 
@@ -122,9 +116,7 @@ function AuthorPanel({ authors, titlePrefix }: { authors: Author[]; titlePrefix:
                 : 'hover:bg-slate-50 dark:hover:bg-zinc-800/50'
             }`}
           >
-            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950/50 flex items-center justify-center text-[11px] font-bold text-blue-700 dark:text-blue-400 shrink-0">
-              {a.initials}
-            </div>
+            <Avatar initials={a.initials} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100 truncate">{a.name}</p>
               <p className="text-[10px] text-slate-400 dark:text-zinc-500">{a.handle} · {a.platform}</p>
@@ -151,18 +143,27 @@ function AuthorPanel({ authors, titlePrefix }: { authors: Author[]; titlePrefix:
 export default function SourcePage() {
   const [tab, setTab] = useState<SrcTab>('news')
 
-  const sources      = tab === 'news' ? newsSources  : socialSources
-  const authors      = tab === 'news' ? newsAuthors  : socialAuthors
-  const chartTitle   = tab === 'news' ? 'Posts by News Source' : 'Posts by Platform'
-  const listTitle    = tab === 'news' ? 'News Sources' : 'Platforms'
-  const authorTitle  = tab === 'news' ? 'Top Authors' : 'Top Accounts'
+  const sources     = tab === 'news' ? newsSources  : socialSources
+  const authors     = tab === 'news' ? newsAuthors  : socialAuthors
+  const chartTitle  = tab === 'news' ? 'Posts by News Source' : 'Posts by Platform'
+  const listTitle   = tab === 'news' ? 'News Sources'         : 'Platforms'
+  const authorTitle = tab === 'news' ? 'Top Authors'          : 'Top Accounts'
+
+  const legendItems = [
+    { label: 'Positive', color: SENTIMENT_COLORS.positive },
+    { label: 'Neutral',  color: SENTIMENT_COLORS.neutral  },
+    { label: 'Negative', color: SENTIMENT_COLORS.negative },
+  ]
 
   return (
     <div className="flex flex-col gap-6">
+
       {/* Toggle */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-slate-500 dark:text-zinc-400">
-          {tab === 'news' ? 'Coverage from news outlets, ranked by audience reach.' : 'Conversation volume across social platforms, ranked by audience reach.'}
+          {tab === 'news'
+            ? 'Coverage from news outlets, ranked by audience reach.'
+            : 'Conversation volume across social platforms, ranked by audience reach.'}
         </p>
         <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-zinc-800 rounded-lg p-1">
           {(['news', 'social'] as SrcTab[]).map(t => (
@@ -188,13 +189,10 @@ export default function SourcePage() {
             {chartTitle} — ranked by reach
           </h2>
           <div className="flex items-center gap-3">
-            {(['Positive', 'Neutral', 'Negative'] as const).map(label => (
-              <span key={label} className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
-                <span
-                  className="w-2 h-2 rounded-sm inline-block"
-                  style={{ background: SENTIMENT_COLORS[label.toLowerCase() as keyof typeof SENTIMENT_COLORS] }}
-                />
-                {label}
+            {legendItems.map(item => (
+              <span key={item.label} className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
+                <span className="w-2 h-2 rounded-sm inline-block" style={{ background: item.color }} />
+                {item.label}
               </span>
             ))}
           </div>

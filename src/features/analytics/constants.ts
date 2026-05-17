@@ -52,3 +52,15 @@ export const PESTLE_COLORS: Record<string, string> = {
 }
 
 export const ALL_PLATFORMS: Platform[] = ['twitter', 'facebook', 'tiktok', 'news', 'forums', 'blogs']
+
+export const PESTLE_LETTER_DISPLAY: Record<string, string> = {
+  P: 'P', E: 'E', S: 'S', T: 'T', L: 'L', Env: 'En',
+}
+
+export const NODE_TYPE_COLORS: Record<string, string> = {
+  source: CHART_COLORS.blue,
+  author: CHART_COLORS.green,
+  post:   CHART_COLORS.amber,
+  org:    CHART_COLORS.purple,
+  topic:  CHART_COLORS.red,
+}

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, Suspense } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { X, Zap, Search } from 'lucide-react'
 import { useAnalyticsFilters } from './hooks/useAnalyticsFilters'
@@ -16,6 +16,8 @@ const NAV_ITEMS = [
   { to: '/analytics/pestle', label: 'PESTLE' },
 ]
 
+const ANALYSIS_DURATION_MS = 1800
+
 const PLATFORM_OPTIONS = ALL_PLATFORMS.map(p => ({ value: p, label: PLATFORM_LABELS[p] }))
 
 export default function Analytics() {
@@ -28,7 +30,7 @@ export default function Analytics() {
   const runAnalysis = () => {
     setFilter(local)
     setAnalysing(true)
-    setTimeout(() => setAnalysing(false), 1800)
+    setTimeout(() => setAnalysing(false), ANALYSIS_DURATION_MS)
   }
 
   const addKw = () => {
@@ -153,7 +155,21 @@ export default function Analytics() {
       </div>
 
       <div className="flex-1 p-6 relative">
-        <Outlet />
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-64">
+            <div className="flex items-center gap-1.5">
+              {[0, 1, 2, 3, 4].map(i => (
+                <div
+                  key={i}
+                  className="w-1 rounded-full bg-blue-400 animate-bounce"
+                  style={{ height: 16, animationDelay: `${i * 80}ms` }}
+                />
+              ))}
+            </div>
+          </div>
+        }>
+          <Outlet />
+        </Suspense>
         {analysing && (
           <div className="absolute inset-0 z-30 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
             <div className="flex items-center gap-1.5">

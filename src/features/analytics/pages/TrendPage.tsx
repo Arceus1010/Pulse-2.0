@@ -2,19 +2,17 @@ import { useState } from 'react'
 import DonutChart from '../components/charts/DonutChart'
 import HorizontalBar from '../components/charts/HorizontalBar'
 import EntityRelationGraph from '../components/charts/EntityRelationGraph'
-import {
-  topicClusters,
-  shareOfVoice, languageBreakdown, strongestRelations, NODE_TYPE_COLORS,
-} from '../mock-data'
-import { CHART_COLORS } from '../constants'
+import SectionCard from '../../../components/ui/SectionCard'
+import { topicClusters, shareOfVoice, languageBreakdown, strongestRelations } from '../mock-data/trend'
+import { CHART_COLORS, NODE_TYPE_COLORS } from '../constants'
 
 const CLUSTER_CLASSES: Record<string, string> = {
-  blue: 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800/40 text-blue-700 dark:text-blue-400',
-  green: 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40 text-emerald-700 dark:text-emerald-400',
-  amber: 'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400',
-  red: 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400',
+  blue:   'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800/40 text-blue-700 dark:text-blue-400',
+  green:  'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40 text-emerald-700 dark:text-emerald-400',
+  amber:  'bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400',
+  red:    'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400',
   purple: 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800/40 text-purple-700 dark:text-purple-400',
-  teal: 'bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-800/40 text-teal-700 dark:text-teal-400',
+  teal:   'bg-teal-50 dark:bg-teal-950/30 border-teal-200 dark:border-teal-800/40 text-teal-700 dark:text-teal-400',
 }
 
 const SOV_COLORS = [
@@ -24,29 +22,6 @@ const SOV_COLORS = [
   CHART_COLORS.amber,
   CHART_COLORS.teal,
 ]
-
-function SectionCard({
-  title,
-  children,
-  action,
-}: {
-  title: string
-  children: React.ReactNode
-  action?: React.ReactNode
-}) {
-  return (
-    <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-      <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-4">
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400 shrink-0">
-          {title}
-        </h2>
-        {action}
-      </div>
-      <div className="p-4">{children}</div>
-    </div>
-  )
-}
-
 
 export default function TrendPage() {
   const allTypes = Object.keys(NODE_TYPE_COLORS)
@@ -109,7 +84,7 @@ export default function TrendPage() {
         </SectionCard>
       </div>
 
-      {/* Row 2: ERD (2/3) + Strongest Relationships (1/3) */}
+      {/* Row 2: ERD (2/3) + Strongest Relationships + Topic Clusters (1/3) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
           <SectionCard title="Entity Relationship Diagram" action={erdFilterLegend}>
@@ -119,16 +94,10 @@ export default function TrendPage() {
           </SectionCard>
         </div>
         <div className="flex flex-col gap-4">
-          {/* Strongest Relationships */}
-          <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800">
-              <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
-                Strongest Relationships
-              </h2>
-            </div>
+          <SectionCard title="Strongest Relationships" contentClassName="">
             {strongestRelations.map((r, i) => {
               const color =
-                r.score >= 0.9 ? CHART_COLORS.blue
+                r.score >= 0.9  ? CHART_COLORS.blue
                 : r.score >= 0.75 ? CHART_COLORS.amber
                 : CHART_COLORS.teal
               return (
@@ -153,9 +122,8 @@ export default function TrendPage() {
                 </div>
               )
             })}
-          </div>
+          </SectionCard>
 
-          {/* Topic Clusters */}
           <SectionCard title="Topic Clusters">
             <div className="flex flex-wrap gap-2">
               {sortedClusters.map(t => (

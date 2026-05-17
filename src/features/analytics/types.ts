@@ -151,5 +151,4 @@ export interface LanguageItem {
 export interface StrongestRelation {
   label: string
   score: number
-  scoreColor: string
 }
