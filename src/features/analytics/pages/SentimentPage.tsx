@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import SentimentStackedBar from '../components/charts/SentimentStackedBar'
 import TrendLineChart from '../components/charts/TrendLineChart'
 import HorizontalBar from '../components/charts/HorizontalBar'
@@ -35,13 +35,13 @@ export default function SentimentPage() {
             key={s.name}
             className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-4 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-3">
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-3">
               {s.name} Sentiment
             </p>
-            <p className="text-2xl font-bold leading-none mb-2" style={{ color: s.color }}>
+            <p className="text-3xl font-bold leading-none mb-2" style={{ color: s.color }}>
               {s.value}%
             </p>
-            <p className="text-[10px] text-slate-400 dark:text-zinc-500">of total mentions</p>
+            <p className="text-xs text-slate-400 dark:text-zinc-500">of total mentions</p>
           </div>
         ))}
       </div>
@@ -106,15 +106,15 @@ export default function SentimentPage() {
       {/* Row 4: Issues list */}
       <SectionCard
         title={`Top ${Math.min(issues.length, 50)} of ${issues.length} results for "SSM"`}
-        action={<span className="text-[10px] text-slate-400 dark:text-zinc-500">Ranked by relevance</span>}
+        action={<span className="text-xs text-slate-400 dark:text-zinc-500">Ranked by relevance</span>}
       >
         <ol className="divide-y divide-slate-100 dark:divide-zinc-800 max-h-96 overflow-y-auto -mx-4 -mb-4">
           {issues.slice(0, 50).map(issue => (
             <li key={issue.id} className="flex items-start gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
-              <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500 pt-0.5 min-w-6">{issue.id}</span>
+              <span className="text-xs font-mono text-slate-400 dark:text-zinc-500 pt-0.5 min-w-6">{issue.id}</span>
               <div>
-                <p className="text-xs font-medium text-blue-700 dark:text-blue-400 leading-snug cursor-pointer hover:underline">{issue.title}</p>
-                <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">{issue.snippet}</p>
+                <p className="text-sm font-medium text-blue-700 dark:text-blue-400 leading-snug cursor-pointer hover:underline">{issue.title}</p>
+                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">{issue.snippet}</p>
               </div>
             </li>
           ))}

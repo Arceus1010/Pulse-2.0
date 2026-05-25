@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 
 import type { Task, TraceStep, TraceStepType } from '../types'
@@ -25,8 +25,8 @@ export default function LiveTrace({ task }: { task: Task }) {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500" />
         </span>
-        <span className="text-sm font-medium text-slate-700 dark:text-zinc-200">Agent is working…</span>
-        <span className="ml-auto text-xs tabular-nums text-slate-500 dark:text-zinc-400">
+        <span className="text-base font-medium text-slate-700 dark:text-zinc-200">Agent is working…</span>
+        <span className="ml-auto text-sm tabular-nums text-slate-500 dark:text-zinc-400">
           {formatElapsed(elapsedSeconds)}
         </span>
       </div>
@@ -66,10 +66,10 @@ function StepCard({ item, index }: { item: DisplayItem; index: number }) {
       <div className="grid grid-cols-[0.5rem_1fr] items-center gap-3 px-4 py-3 opacity-35">
         <span className="w-2 h-2 rounded-full border border-slate-300 dark:border-zinc-600 justify-self-center" />
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 tabular-nums w-4 text-right shrink-0">
+          <span className="text-xs font-medium text-slate-500 dark:text-zinc-400 tabular-nums w-4 text-right shrink-0">
             {index + 1}
           </span>
-          <span className="text-xs text-slate-500 dark:text-zinc-400 truncate">
+          <span className="text-sm text-slate-500 dark:text-zinc-400 truncate">
             {TRACE_STEP_TYPE_LABELS[item.type]}
           </span>
         </div>
@@ -106,7 +106,7 @@ function StepCard({ item, index }: { item: DisplayItem; index: number }) {
 
         {/* Label row */}
         <div className="flex items-center gap-2 min-w-0">
-          <span className={`text-[11px] font-medium tabular-nums w-4 text-right shrink-0 ${
+          <span className={`text-xs font-medium tabular-nums w-4 text-right shrink-0 ${
             isRunning
               ? 'text-blue-500 dark:text-blue-400'
               : 'text-slate-500 dark:text-zinc-400'
@@ -114,7 +114,7 @@ function StepCard({ item, index }: { item: DisplayItem; index: number }) {
             {index + 1}
           </span>
 
-          <span className={`text-xs truncate ${
+          <span className={`text-sm truncate ${
             isRunning
               ? 'font-medium text-slate-800 dark:text-zinc-100'
               : 'text-slate-700 dark:text-zinc-200'
@@ -123,7 +123,7 @@ function StepCard({ item, index }: { item: DisplayItem; index: number }) {
           </span>
 
           {isComplete && actualStep.durationMs != null && (
-            <span className="ml-auto text-[11px] tabular-nums text-slate-500 dark:text-zinc-400 shrink-0">
+            <span className="ml-auto text-xs tabular-nums text-slate-500 dark:text-zinc-400 shrink-0">
               {formatDuration(actualStep.durationMs)}
             </span>
           )}
@@ -143,7 +143,7 @@ function StepCard({ item, index }: { item: DisplayItem; index: number }) {
         <div className="grid grid-cols-[0.5rem_1fr] gap-3 px-4 pb-3 pointer-events-none">
           <div />
           <div className="pl-6">
-            <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
+            <p className="text-sm text-slate-500 dark:text-zinc-400 leading-relaxed">
               {deriveStepSummary(actualStep)}
             </p>
           </div>
@@ -157,7 +157,7 @@ function StepCard({ item, index }: { item: DisplayItem; index: number }) {
           <div className="pl-6 flex flex-col gap-3">
 
             {isComplete && (
-              <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
+              <p className="text-sm text-slate-500 dark:text-zinc-400 leading-relaxed">
                 {deriveStepSummary(actualStep)}
               </p>
             )}
@@ -167,7 +167,7 @@ function StepCard({ item, index }: { item: DisplayItem; index: number }) {
 
             {actualStep.reasoning && (
               <div className="rounded-md border-l-2 border-blue-200 dark:border-blue-800/60 bg-blue-50/50 dark:bg-blue-950/10 px-3 py-2">
-                <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed italic">
+                <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed italic">
                   {actualStep.reasoning}
                 </p>
               </div>
@@ -204,7 +204,7 @@ function DataBlock({ label, data }: { label: string; data: Record<string, unknow
   return (
     <div className="rounded-md border border-slate-100 dark:border-zinc-700/60 overflow-hidden">
       <div className="px-2.5 py-1 bg-slate-50 dark:bg-zinc-800 border-b border-slate-100 dark:border-zinc-700/60">
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+        <span className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
           {label}
         </span>
       </div>
@@ -220,7 +220,7 @@ function DataBlock({ label, data }: { label: string; data: Record<string, unknow
 function DataEntry({ name, value, depth = 0 }: { name: string; value: unknown; depth?: number }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+      <span className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-zinc-400">
         {name}
       </span>
       <DataValue value={value} depth={depth} />
@@ -230,16 +230,16 @@ function DataEntry({ name, value, depth = 0 }: { name: string; value: unknown; d
 
 function DataValue({ value, depth = 0 }: { value: unknown; depth?: number }) {
   if (value === null || value === undefined) {
-    return <span className="text-xs text-slate-400 dark:text-zinc-500 italic">—</span>
+    return <span className="text-sm text-slate-400 dark:text-zinc-500 italic">—</span>
   }
   if (typeof value === 'string') {
-    return <p className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed wrap-break-words">{value}</p>
+    return <p className="text-sm text-slate-700 dark:text-zinc-300 leading-relaxed wrap-break-words">{value}</p>
   }
   if (typeof value === 'number') {
-    return <p className="text-xs text-slate-700 dark:text-zinc-300 tabular-nums">{value.toLocaleString()}</p>
+    return <p className="text-sm text-slate-700 dark:text-zinc-300 tabular-nums">{value.toLocaleString()}</p>
   }
   if (typeof value === 'boolean') {
-    return <p className="text-xs text-slate-700 dark:text-zinc-300">{value ? 'Yes' : 'No'}</p>
+    return <p className="text-sm text-slate-700 dark:text-zinc-300">{value ? 'Yes' : 'No'}</p>
   }
   if (Array.isArray(value)) {
     const visible  = value.slice(0, 6)
@@ -247,12 +247,12 @@ function DataValue({ value, depth = 0 }: { value: unknown; depth?: number }) {
     return (
       <ul className="flex flex-col gap-0.5 pl-3">
         {visible.map((item, i) => (
-          <li key={i} className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed list-disc list-outside">
+          <li key={i} className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed list-disc list-outside">
             {typeof item === 'string' ? item : JSON.stringify(item)}
           </li>
         ))}
         {overflow > 0 && (
-          <li className="text-xs text-slate-500 dark:text-zinc-400 italic list-none">
+          <li className="text-sm text-slate-500 dark:text-zinc-400 italic list-none">
             +{overflow} more
           </li>
         )}
@@ -269,7 +269,7 @@ function DataValue({ value, depth = 0 }: { value: unknown; depth?: number }) {
       </div>
     )
   }
-  return <p className="text-xs text-slate-500 dark:text-zinc-400 font-mono">{JSON.stringify(value)}</p>
+  return <p className="text-sm text-slate-500 dark:text-zinc-400 font-mono">{JSON.stringify(value)}</p>
 }
 
 // ─── Step summary ─────────────────────────────────────────────────────────────

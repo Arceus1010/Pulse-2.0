@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { FileText, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react'
+import Button from '../../../components/ui/Button'
 
 import type { Task, Artifact } from '../types'
 import { PhaseBadge } from './PhaseBadge'
@@ -37,14 +38,14 @@ export default function TaskCard({ task, artifact, isLatest, onViewTrace, onRetr
       <div className="flex items-center gap-2 flex-wrap">
         <PhaseBadge phase={task.phase} />
         {phaseDetail && (
-          <span className="text-[11px] text-slate-500 dark:text-zinc-400">{phaseDetail}</span>
+          <span className="text-xs text-slate-500 dark:text-zinc-400">{phaseDetail}</span>
         )}
       </div>
 
       {/* Prompt text */}
       <div className="relative">
         <p
-          className={`text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap break-words ${
+          className={`text-sm text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap wrap-break-word ${
             !expanded && promptLines.length > 3 ? 'line-clamp-3' : ''
           }`}
         >
@@ -55,7 +56,7 @@ export default function TaskCard({ task, artifact, isLatest, onViewTrace, onRetr
         {task.prompt.length > 200 || promptLines.length > 3 ? (
           <button
             onClick={() => setExpanded(v => !v)}
-            className="mt-1 flex items-center gap-0.5 text-xs text-slate-500 dark:text-zinc-400 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors"
+            className="mt-1 flex items-center gap-0.5 text-sm text-slate-500 dark:text-zinc-400 hover:text-slate-600 dark:hover:text-zinc-300 transition-colors"
           >
             {expanded ? (
               <><ChevronUp className="w-3 h-3" /> Show less</>
@@ -69,7 +70,7 @@ export default function TaskCard({ task, artifact, isLatest, onViewTrace, onRetr
       {/* Artifact pill + View trace link — visible once task is done */}
       {task.phase === 'done' && artifact && (
         <div className="flex items-center gap-2 pt-0.5 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 text-sm font-medium text-emerald-700 dark:text-emerald-400">
             <FileText className="w-3 h-3" />
             {artifact.title}
           </span>
@@ -77,7 +78,7 @@ export default function TaskCard({ task, artifact, isLatest, onViewTrace, onRetr
             <button
               type="button"
               onClick={onViewTrace}
-              className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
             >
               View trace →
             </button>
@@ -89,20 +90,21 @@ export default function TaskCard({ task, artifact, isLatest, onViewTrace, onRetr
       {task.phase === 'failed' && (onRetry || onModifyRetry) && (
         <div className="flex items-center gap-2 pt-0.5">
           {onRetry && (
-            <button
+            <Button
               type="button"
               onClick={onRetry}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-slate-200 dark:border-zinc-700 text-xs font-medium text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+              variant="outline"
+              size="xs"
+              icon={<RotateCcw />}
             >
-              <RotateCcw className="w-3 h-3" />
               Retry
-            </button>
+            </Button>
           )}
           {onModifyRetry && (
             <button
               type="button"
               onClick={onModifyRetry}
-              className="text-xs text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:underline transition-colors"
+              className="text-sm text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200 hover:underline transition-colors"
             >
               Modify and retry
             </button>
@@ -116,10 +118,12 @@ export default function TaskCard({ task, artifact, isLatest, onViewTrace, onRetr
 // ─── Elapsed time ─────────────────────────────────────────────────────────────
 
 function useElapsedSeconds(since: string | null): number {
-  const [elapsed, setElapsed] = useState(0)
+  const [elapsed, setElapsed] = useState(() =>
+    since ? Math.floor((Date.now() - new Date(since).getTime()) / 1000) : 0
+  )
 
   useEffect(() => {
-    if (!since) { setElapsed(0); return }
+    if (!since) return
 
     const update = () =>
       setElapsed(Math.floor((Date.now() - new Date(since).getTime()) / 1000))

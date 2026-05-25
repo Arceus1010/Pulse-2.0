@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+﻿import { useState, useRef } from 'react'
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps'
 import type { StateData } from '../types'
 import { SENTIMENT_COLORS } from '../constants'
@@ -105,7 +105,7 @@ export default function MalaysiaMap({ data, viewMode, selected, onSelect }: Prop
             return (
               <div key={lbl} className="flex items-center gap-1.5">
                 <div className="w-6 h-2 rounded-sm" style={{ background: `rgba(59, 130, 246, ${0.12 + a * 0.68})` }} />
-                <span className="text-[10px] text-slate-500 dark:text-zinc-400">{lbl}</span>
+                <span className="text-xs text-slate-500 dark:text-zinc-400">{lbl}</span>
               </div>
             )
           })
@@ -117,7 +117,7 @@ export default function MalaysiaMap({ data, viewMode, selected, onSelect }: Prop
           ].map(item => (
             <div key={item.label} className="flex items-center gap-1.5">
               <div className="w-6 h-2 rounded-sm" style={{ background: item.color }} />
-              <span className="text-[10px] text-slate-500 dark:text-zinc-400">{item.label}</span>
+              <span className="text-xs text-slate-500 dark:text-zinc-400">{item.label}</span>
             </div>
           ))
         )}
@@ -130,12 +130,12 @@ export default function MalaysiaMap({ data, viewMode, selected, onSelect }: Prop
           style={{ left: tooltip.x + 14, top: tooltip.y - 12, minWidth: 168 }}
         >
           <div className="flex items-center justify-between gap-3 mb-1">
-            <p className="text-xs font-semibold text-slate-900 dark:text-zinc-100">{tooltip.sd.state}</p>
-            <span className={`text-[10px] font-semibold ${tooltip.sd.delta >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
+            <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">{tooltip.sd.state}</p>
+            <span className={`text-xs font-semibold ${tooltip.sd.delta >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
               {tooltip.sd.delta >= 0 ? '+' : ''}{tooltip.sd.delta}%
             </span>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-zinc-400 mb-2">
+          <p className="text-xs text-slate-500 dark:text-zinc-400 mb-2">
             {tooltip.sd.mentions.toLocaleString()} mentions · {tooltip.sd.percentage}%
           </p>
           <div className="flex h-1.5 rounded-full overflow-hidden">
@@ -144,8 +144,8 @@ export default function MalaysiaMap({ data, viewMode, selected, onSelect }: Prop
             <div style={{ width: `${tooltip.sd.sentiment.negative}%`, background: SENTIMENT_COLORS.negative }} />
           </div>
           <div className="flex justify-between mt-1">
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400">{tooltip.sd.sentiment.positive}% pos</span>
-            <span className="text-[10px] text-red-500 dark:text-red-400">{tooltip.sd.sentiment.negative}% neg</span>
+            <span className="text-xs text-emerald-600 dark:text-emerald-400">{tooltip.sd.sentiment.positive}% pos</span>
+            <span className="text-xs text-red-500 dark:text-red-400">{tooltip.sd.sentiment.negative}% neg</span>
           </div>
         </div>
       )}

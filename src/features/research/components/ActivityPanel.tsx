@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { ArrowUp } from 'lucide-react'
 import Tooltip from '../../../components/ui/Tooltip'
+import Button from '../../../components/ui/Button'
 
 import type { Project, Artifact } from '../types'
 import TaskCard from './TaskCard'
@@ -108,7 +109,7 @@ export default function ActivityPanel({ project, onFollowUp, onViewTrace, onRetr
       {/* ── Task list ────────────────────────────────────────────────── */}
       <div className="flex-1 px-4 py-4">
         {hasNoTasks ? (
-          <p className="text-xs text-slate-500 dark:text-zinc-400 text-center py-8">
+          <p className="text-sm text-slate-500 dark:text-zinc-400 text-center py-8">
             No tasks yet. Dispatch your first prompt below.
           </p>
         ) : (
@@ -145,7 +146,7 @@ export default function ActivityPanel({ project, onFollowUp, onViewTrace, onRetr
             onKeyDown={handleKeyDown}
             placeholder="Add a follow-up…"
             rows={2}
-            className="w-full resize-none bg-transparent px-3 pt-3 pb-1 text-sm text-slate-800 dark:text-zinc-100 placeholder:text-slate-500 dark:placeholder:text-zinc-400 outline-none"
+            className="w-full resize-none bg-transparent px-3 pt-3 pb-1 text-base text-slate-800 dark:text-zinc-100 placeholder:text-slate-500 dark:placeholder:text-zinc-400 outline-none"
           />
 
           <div className="flex items-center gap-2 px-3 pb-2.5 pt-1.5">
@@ -161,7 +162,7 @@ export default function ActivityPanel({ project, onFollowUp, onViewTrace, onRetr
 
                 {intent === 'update' && (
                   project.artifacts.length === 1 ? (
-                    <span className="text-xs text-slate-500 dark:text-zinc-400 truncate max-w-30">
+                    <span className="text-sm text-slate-500 dark:text-zinc-400 truncate max-w-30">
                       {targetArtifact?.title}
                     </span>
                   ) : (
@@ -196,7 +197,7 @@ export default function ActivityPanel({ project, onFollowUp, onViewTrace, onRetr
             <div className="w-px h-4 bg-slate-200 dark:bg-zinc-700 shrink-0" />
 
             {/* Char count / hint */}
-            <span className="text-[11px] text-slate-400 dark:text-zinc-500 tabular-nums">
+            <span className="text-xs text-slate-400 dark:text-zinc-500 tabular-nums">
               {followUp.length > 0
                 ? `${followUp.length} / ${MAX_FOLLOW_UP_LENGTH.toLocaleString()}`
                 : '⌘ Enter to send'}
@@ -204,14 +205,15 @@ export default function ActivityPanel({ project, onFollowUp, onViewTrace, onRetr
 
             <div className="flex-1" />
 
-            <button
+            <Button
               onClick={handleSubmit}
               disabled={!followUp.trim()}
-              className="flex items-center gap-1 h-6 px-2.5 rounded-sm bg-blue-800 hover:bg-blue-900 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors shrink-0"
+              iconRight={<ArrowUp />}
+              size="xs"
+              className="shrink-0"
             >
               Send
-              <ArrowUp className="w-3 h-3" />
-            </button>
+            </Button>
 
           </div>
         </div>
@@ -227,7 +229,7 @@ function SourceChip({ label, active, onClick }: { label: string; active: boolean
   return (
     <button
       onClick={onClick}
-      className={`h-5 px-2 rounded text-[11px] font-medium transition-colors ${
+      className={`h-5 px-2 rounded text-xs font-medium transition-colors ${
         active
           ? 'bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-400'
           : 'bg-transparent border border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600 hover:text-slate-700 dark:hover:text-zinc-200'

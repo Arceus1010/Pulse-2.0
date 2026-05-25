@@ -1,4 +1,4 @@
-interface LegendItem {
+﻿interface LegendItem {
   label: string
   color: string
   shape?: 'square' | 'line'
@@ -14,7 +14,7 @@ export default function Legend({ items, className }: Props) {
   return (
     <div className={`flex flex-wrap gap-4 ${className ?? ''}`}>
       {items.map(item => (
-        <span key={item.label} className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
+        <span key={item.label} className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400">
           {item.shape === 'line' ? (
             <span
               className="w-5 rounded-full inline-block shrink-0"

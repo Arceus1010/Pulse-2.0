@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookOpen } from 'lucide-react'
 
@@ -7,7 +7,6 @@ import { useResearch } from './hooks/useResearch'
 import { generateId } from './utils/id'
 import Dispatcher, { type DispatchConfig } from './components/Dispatcher'
 import ProjectCard from './components/ProjectCard'
-import TabBar from '../../components/ui/TabBar'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -77,6 +76,18 @@ export default function Research() {
     })
   }, [state.projects, filter])
 
+  const filterCounts = useMemo(() => {
+    const counts: Record<Exclude<FilterOption, 'all'>, number> = { executing: 0, done: 0, failed: 0, awaiting: 0 }
+    for (const p of state.projects) {
+      const latest = getLatestTask(p)
+      if (!latest) continue
+      for (const key of Object.keys(FILTER_PHASES) as Exclude<FilterOption, 'all'>[]) {
+        if (FILTER_PHASES[key].includes(latest.phase)) counts[key]++
+      }
+    }
+    return counts
+  }, [state.projects])
+
   function handleDispatch(config: DispatchConfig) {
     const now = new Date().toISOString()
     const projectId = generateId()
@@ -127,7 +138,7 @@ export default function Research() {
       <div className="h-14 flex items-center px-6 border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 sticky top-0 z-20">
         <div className="flex items-center gap-2 text-slate-800 dark:text-zinc-100">
           <BookOpen className="w-4 h-4 text-blue-800 dark:text-blue-400" />
-          <span className="text-sm font-semibold">Research</span>
+          <span className="text-base font-semibold">Research</span>
         </div>
       </div>
 
@@ -138,6 +149,7 @@ export default function Research() {
             projects={filteredProjects}
             totalCount={state.projects.length}
             filter={filter}
+            filterCounts={filterCounts}
             onFilterChange={setFilter}
             onDispatch={handleDispatch}
           />
@@ -163,8 +175,8 @@ function EmptyWorkspace({ onDispatch, prefillPrompt, onExampleClick }: EmptyWork
         <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 flex items-center justify-center text-blue-800 dark:text-blue-400">
           <BookOpen className="w-6 h-6" />
         </div>
-        <h1 className="text-base font-semibold text-slate-800 dark:text-zinc-100">Research</h1>
-        <p className="text-xs leading-relaxed text-slate-500 dark:text-zinc-400 max-w-xs">
+        <h1 className="text-lg font-semibold text-slate-800 dark:text-zinc-100">Research</h1>
+        <p className="text-sm leading-relaxed text-slate-500 dark:text-zinc-400 max-w-xs">
           Dispatch a research prompt and let the agent gather sources, synthesize insights,
           and produce a structured artifact — while you do something else.
         </p>
@@ -181,7 +193,7 @@ function EmptyWorkspace({ onDispatch, prefillPrompt, onExampleClick }: EmptyWork
           <button
             key={prompt}
             onClick={() => onExampleClick(prompt)}
-            className="px-3 py-1.5 rounded-full border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs text-slate-500 dark:text-zinc-400 hover:border-blue-200 dark:hover:border-blue-800/60 hover:text-blue-800 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors text-left"
+            className="px-3 py-1.5 rounded-full border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm text-slate-500 dark:text-zinc-400 hover:border-blue-200 dark:hover:border-blue-800/60 hover:text-blue-800 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors text-left"
           >
             {prompt}
           </button>
@@ -198,6 +210,7 @@ interface PopulatedWorkspaceProps {
   projects: Project[]
   totalCount: number
   filter: FilterOption
+  filterCounts: Record<Exclude<FilterOption, 'all'>, number>
   onFilterChange: (f: FilterOption) => void
   onDispatch: (config: DispatchConfig) => void
 }
@@ -206,6 +219,7 @@ function PopulatedWorkspace({
   projects,
   totalCount,
   filter,
+  filterCounts,
   onFilterChange,
   onDispatch,
 }: PopulatedWorkspaceProps) {
@@ -218,15 +232,32 @@ function PopulatedWorkspace({
 
         {/* Filter row */}
         <div className="flex items-center gap-2">
-          <TabBar
-            options={FILTER_OPTIONS.map(opt => ({ value: opt, label: FILTER_LABELS[opt] }))}
-            value={filter}
-            onChange={v => onFilterChange(v as FilterOption)}
-          />
+          <div className="flex items-center gap-1">
+            {FILTER_OPTIONS.map(opt => {
+              const count = opt === 'all' ? totalCount : filterCounts[opt]
+              const isActive = filter === opt
+              return (
+                <button
+                  key={opt}
+                  onClick={() => onFilterChange(opt)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900'
+                      : 'text-slate-500 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-700 dark:hover:text-zinc-200'
+                  }`}
+                >
+                  {FILTER_LABELS[opt]}
+                  <span className={`tabular-nums ${isActive ? 'opacity-60' : 'opacity-50'}`}>
+                    {count}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
 
           <div className="flex-1" />
 
-          <span className="text-xs text-slate-500 dark:text-zinc-400 tabular-nums">
+          <span className="text-sm text-slate-400 dark:text-zinc-500 tabular-nums">
             {projects.length === totalCount
               ? `${totalCount} ${totalCount === 1 ? 'project' : 'projects'}`
               : `${projects.length} of ${totalCount}`}
@@ -235,17 +266,17 @@ function PopulatedWorkspace({
 
         {/* Project grid */}
         {projects.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {projects.map(p => (
               <ProjectCard key={p.id} project={p} />
             ))}
           </div>
         ) : (
           <div className="py-16 flex flex-col items-center gap-2 text-center">
-            <p className="text-sm font-medium text-slate-500 dark:text-zinc-400">
+            <p className="text-base font-medium text-slate-500 dark:text-zinc-400">
               No projects match this filter
             </p>
-            <p className="text-xs text-slate-500 dark:text-zinc-400">
+            <p className="text-sm text-slate-500 dark:text-zinc-400">
               Try a different filter or dispatch a new prompt above.
             </p>
           </div>

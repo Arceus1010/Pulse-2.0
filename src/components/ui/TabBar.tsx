@@ -1,4 +1,4 @@
-interface Option {
+﻿interface Option {
   value: string
   label: string
 }
@@ -16,7 +16,7 @@ export default function TabBar({ options, value, onChange }: Props) {
         <button
           key={o.value}
           onClick={() => onChange(o.value)}
-          className={`px-2.5 py-1 rounded text-xs font-medium transition-colors whitespace-nowrap cursor-pointer ${
+          className={`px-2.5 py-1 rounded text-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
             value === o.value
               ? 'bg-white dark:bg-zinc-900 text-slate-900 dark:text-zinc-50 shadow-sm'
               : 'text-slate-500 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-zinc-700 hover:text-slate-700 dark:hover:text-zinc-200'

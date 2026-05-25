@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 import KPICard from '../components/KPICard'
 import PostCard from '../components/PostCard'
 import TrendLineChart from '../components/charts/TrendLineChart'
@@ -111,11 +111,11 @@ export default function OverviewPage() {
           <div className="mt-3 space-y-2">
             {sourceBreakdown.map(s => (
               <div key={s.name} className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-xs text-slate-600 dark:text-zinc-300">
+                <span className="flex items-center gap-2 text-sm text-slate-600 dark:text-zinc-300">
                   <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: s.color }} />
                   {s.name}
                 </span>
-                <span className="text-xs font-semibold text-slate-700 dark:text-zinc-200">{s.value}%</span>
+                <span className="text-sm font-semibold text-slate-700 dark:text-zinc-200">{s.value}%</span>
               </div>
             ))}
           </div>

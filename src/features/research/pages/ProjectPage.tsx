@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef, useEffect } from 'react'
+﻿import { useMemo, useState, useRef, useEffect } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { ChevronLeft, BookOpen } from 'lucide-react'
 
@@ -167,12 +167,12 @@ function ProjectContent({ project }: { project: Project }) {
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           <BookOpen className="w-3.5 h-3.5" />
-          <span className="text-xs font-medium">Research</span>
+          <span className="text-sm font-medium">Research</span>
         </Link>
 
         <span className="shrink-0 text-slate-300 dark:text-zinc-700">/</span>
 
-        <h1 className="text-sm font-semibold text-slate-800 dark:text-zinc-100 truncate min-w-0">
+        <h1 className="text-base font-semibold text-slate-800 dark:text-zinc-100 truncate min-w-0">
           {project.title}
         </h1>
       </header>

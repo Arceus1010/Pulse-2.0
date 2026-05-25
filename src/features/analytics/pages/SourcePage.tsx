@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import SentimentBadge from '../components/SentimentBadge'
 import Avatar from '../../../components/ui/Avatar'
@@ -81,10 +81,10 @@ function SourceList({ sources }: { sources: SourceBreakdown[] }) {
     <ul className="divide-y divide-slate-100 dark:divide-zinc-800">
       {sorted.map((s, i) => (
         <li key={s.name} className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
-          <span className="text-[11px] font-mono text-slate-400 dark:text-zinc-600 w-4 text-right shrink-0">{i + 1}</span>
+          <span className="text-xs font-mono text-slate-400 dark:text-zinc-600 w-4 text-right shrink-0">{i + 1}</span>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-slate-800 dark:text-zinc-200 truncate">{s.name}</p>
-            <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">
+            <p className="text-base font-medium text-slate-800 dark:text-zinc-200 truncate">{s.name}</p>
+            <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">
               {s.posts.toLocaleString()} posts · {formatReach(s.reach)} reach
             </p>
           </div>
@@ -101,7 +101,7 @@ function AuthorPanel({ authors, titlePrefix }: { authors: Author[]; titlePrefix:
   return (
     <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden flex flex-col">
       <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800">
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
           {titlePrefix}
         </h2>
       </div>
@@ -118,21 +118,21 @@ function AuthorPanel({ authors, titlePrefix }: { authors: Author[]; titlePrefix:
           >
             <Avatar initials={a.initials} />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100 truncate">{a.name}</p>
-              <p className="text-[10px] text-slate-400 dark:text-zinc-500">{a.handle} · {a.platform}</p>
+              <p className="text-base font-semibold text-slate-900 dark:text-zinc-100 truncate">{a.name}</p>
+              <p className="text-xs text-slate-400 dark:text-zinc-500">{a.handle} · {a.platform}</p>
             </div>
             <div className="flex flex-col items-end gap-1 shrink-0">
-              <span className="text-[11px] font-mono text-slate-400 dark:text-zinc-500">{a.reach}</span>
+              <span className="text-xs font-mono text-slate-400 dark:text-zinc-500">{a.reach}</span>
               <SentimentBadge sentiment={a.sentiment} />
             </div>
           </button>
         ))}
       </div>
       <div className="flex-1 flex flex-col justify-center px-4 py-4 border-t border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/50">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1.5">
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1.5">
           {selected.name} · Recent Statement
         </p>
-        <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed italic border-l-2 border-blue-300 dark:border-blue-700 pl-3">
+        <p className="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed italic border-l-2 border-blue-300 dark:border-blue-700 pl-3">
           "{selected.recentStatement}"
         </p>
       </div>
@@ -160,7 +160,7 @@ export default function SourcePage() {
 
       {/* Toggle */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-500 dark:text-zinc-400">
+        <p className="text-base text-slate-500 dark:text-zinc-400">
           {tab === 'news'
             ? 'Coverage from news outlets, ranked by audience reach.'
             : 'Conversation volume across social platforms, ranked by audience reach.'}
@@ -170,7 +170,7 @@ export default function SourcePage() {
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                 tab === t
                   ? 'bg-white dark:bg-zinc-700 text-slate-800 dark:text-zinc-100 shadow-sm'
                   : 'text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200'
@@ -185,12 +185,12 @@ export default function SourcePage() {
       {/* Chart */}
       <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
-          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
             {chartTitle} — ranked by reach
           </h2>
           <div className="flex items-center gap-3">
             {legendItems.map(item => (
-              <span key={item.label} className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
+              <span key={item.label} className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400">
                 <span className="w-2 h-2 rounded-sm inline-block" style={{ background: item.color }} />
                 {item.label}
               </span>
@@ -206,7 +206,7 @@ export default function SourcePage() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start">
         <div className="lg:col-span-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800">
-            <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
               {listTitle} — by reach
             </h2>
           </div>

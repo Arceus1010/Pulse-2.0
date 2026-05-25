@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+﻿import { useState, useMemo } from 'react'
 import DonutChart from '../components/charts/DonutChart'
 import HorizontalBar from '../components/charts/HorizontalBar'
 import EntityRelationGraph from '../components/charts/EntityRelationGraph'
@@ -72,7 +72,7 @@ export default function TrendPage() {
         <SectionCard title="Language Breakdown">
           <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-3">
             {languageBreakdown.map(l => (
-              <span key={l.name} className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
+              <span key={l.name} className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zinc-400">
                 <span className="w-2 h-2 rounded-sm shrink-0" style={{ background: l.color }} />
                 {l.name}
                 <span className="font-semibold text-slate-700 dark:text-zinc-300">{l.value}%</span>
@@ -114,17 +114,17 @@ export default function TrendPage() {
                   key={i}
                   className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-100 dark:border-zinc-800 last:border-0 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors"
                 >
-                  <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500 w-3.5 shrink-0 text-right">
+                  <span className="text-xs font-mono text-slate-400 dark:text-zinc-500 w-3.5 shrink-0 text-right">
                     {i + 1}
                   </span>
-                  <span className="text-xs text-slate-700 dark:text-zinc-300 flex-1 min-w-0 leading-snug">
+                  <span className="text-sm text-slate-700 dark:text-zinc-300 flex-1 min-w-0 leading-snug">
                     {r.label}
                   </span>
                   <div className="flex items-center gap-2 shrink-0">
                     <div className="w-10 h-1 bg-slate-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                       <div className="h-full rounded-full" style={{ width: `${r.score * 100}%`, background: color }} />
                     </div>
-                    <span className="text-sm font-mono font-bold tabular-nums w-8 text-right" style={{ color }}>
+                    <span className="text-base font-mono font-bold tabular-nums w-8 text-right" style={{ color }}>
                       {r.score.toFixed(2)}
                     </span>
                   </div>
@@ -138,7 +138,7 @@ export default function TrendPage() {
               {sortedClusters.map(t => (
                 <span
                   key={t.label}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border ${CLUSTER_CLASSES[t.color]}`}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${CLUSTER_CLASSES[t.color]}`}
                 >
                   {t.label}
                   <span className="opacity-40 select-none">·</span>

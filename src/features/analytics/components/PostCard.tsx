@@ -1,4 +1,4 @@
-import { Heart, Share2, Eye } from 'lucide-react'
+﻿import { Heart, Share2, Eye } from 'lucide-react'
 import type { Post, Platform } from '../types'
 import { PLATFORM_LABELS } from '../constants'
 import Avatar from '../../../components/ui/Avatar'
@@ -26,27 +26,27 @@ export default function PostCard({ post }: { post: Post }) {
         <div className="flex items-center gap-2 min-w-0">
           <Avatar initials={initials} />
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100 truncate">{post.author}</p>
-            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide border ${PLATFORM_BADGE[post.platform]}`}>
+            <p className="text-base font-semibold text-slate-900 dark:text-zinc-100 truncate">{post.author}</p>
+            <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wide border ${PLATFORM_BADGE[post.platform]}`}>
               {PLATFORM_LABELS[post.platform]}
             </span>
           </div>
         </div>
-        <span className="text-[10px] text-slate-400 dark:text-zinc-500 shrink-0">{post.publishedAt}</span>
+        <span className="text-xs text-slate-400 dark:text-zinc-500 shrink-0">{post.publishedAt}</span>
       </div>
 
-      <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed line-clamp-3 flex-1">
+      <p className="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed line-clamp-3 flex-1">
         {post.content}
       </p>
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3 text-[11px] text-slate-400 dark:text-zinc-500">
+        <div className="flex items-center gap-3 text-xs text-slate-400 dark:text-zinc-500">
           <span className="flex items-center gap-1"><Heart className="w-3 h-3" />{fmt(post.likes)}</span>
           <span className="flex items-center gap-1"><Share2 className="w-3 h-3" />{fmt(post.shares)}</span>
         </div>
         <div className="flex items-center gap-2">
           <SentimentBadge sentiment={post.sentiment} />
-          <button className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors">
+          <button className="flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors">
             <Eye className="w-3 h-3" />
             See Post
           </button>

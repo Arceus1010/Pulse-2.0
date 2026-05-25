@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FileText, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 
 import type { Project, Task } from '../types'
-import { SOURCES_MODE_LABELS, deriveSourcesMode } from '../types'
+import { SOURCES_MODE_LABELS, ARTIFACT_KIND_LABELS, deriveSourcesMode } from '../types'
 import { PhaseBadge } from './PhaseBadge'
 import { formatRelativeTime } from '../utils/time'
 import { useResearch } from '../hooks/useResearch'
@@ -29,7 +29,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const taskCount     = project.tasks.length
   const artifactCount = project.artifacts.length
 
-  // Close menu on outside click
   useEffect(() => {
     if (!menuOpen && !confirmDelete) return
     function handler(e: MouseEvent) {
@@ -42,7 +41,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     return () => document.removeEventListener('mousedown', handler)
   }, [menuOpen, confirmDelete])
 
-  // Focus input when rename starts
   useEffect(() => {
     if (renaming) inputRef.current?.select()
   }, [renaming])
@@ -88,10 +86,29 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     <div className="relative group">
       <Link
         to={`/research/projects/${project.id}`}
-        className="block bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-4 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors"
+        className="flex flex-col h-40 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg p-4 hover:border-slate-300 dark:hover:border-zinc-700 hover:shadow-sm transition-all"
       >
-        {/* Title row */}
-        <div className="flex items-start justify-between gap-3 mb-3">
+        {/* Top: status badge + menu trigger */}
+        <div className="flex items-center justify-between shrink-0 mb-3">
+          {latestTask ? (
+            <PhaseBadge phase={latestTask.phase} />
+          ) : (
+            <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-400 dark:text-zinc-500">
+              New
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={openMenu}
+            title="Project options"
+            className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-0.5 rounded text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all"
+          >
+            <MoreHorizontal className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Middle: title + type label */}
+        <div className="flex-1 min-h-0">
           {renaming ? (
             <input
               ref={inputRef}
@@ -103,43 +120,37 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 if (e.key === 'Escape') { e.preventDefault(); setRenaming(false) }
               }}
               onClick={e => e.preventDefault()}
-              className="flex-1 min-w-0 bg-transparent outline-none border-b-2 border-blue-400 dark:border-blue-600 text-sm font-medium text-slate-800 dark:text-zinc-100 leading-snug"
+              className="w-full bg-transparent outline-none border-b-2 border-blue-400 dark:border-blue-600 text-base font-semibold text-slate-800 dark:text-zinc-100 leading-snug"
             />
           ) : (
-            <p className="flex-1 min-w-0 text-sm font-medium text-slate-800 dark:text-zinc-100 leading-snug line-clamp-2 group-hover:text-blue-800 dark:group-hover:text-blue-400 transition-colors">
+            <p className="text-base font-semibold text-slate-800 dark:text-zinc-100 leading-snug line-clamp-2 group-hover:text-blue-800 dark:group-hover:text-blue-400 transition-colors">
               {project.title}
             </p>
           )}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {latestTask && <PhaseBadge phase={latestTask.phase} />}
-
-            {/* Context menu trigger */}
-            <button
-              type="button"
-              onClick={openMenu}
-              title="Project options"
-              className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-0.5 rounded text-slate-500 dark:text-zinc-400 hover:text-slate-600 dark:hover:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all"
-            >
-              <MoreHorizontal className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          {latestTask && !renaming && (
+            <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1 line-clamp-1">
+              {ARTIFACT_KIND_LABELS[latestTask.artifactKind]} · {SOURCES_MODE_LABELS[sourcesMode]}
+            </p>
+          )}
         </div>
 
-        {/* Meta row */}
-        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-400">
-          <span className="font-medium">{SOURCES_MODE_LABELS[sourcesMode]}</span>
-          <span aria-hidden>·</span>
-          <span className="flex items-center gap-1">
-            <FileText className="w-3 h-3" />
-            {taskCount} {taskCount === 1 ? 'task' : 'tasks'}
+        {/* Bottom: task/artifact counts + timestamp */}
+        <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-zinc-800/60 shrink-0">
+          <div className="flex items-center gap-2 text-sm text-slate-400 dark:text-zinc-500">
+            <span className="flex items-center gap-1">
+              <FileText className="w-3 h-3" />
+              {taskCount} {taskCount === 1 ? 'task' : 'tasks'}
+            </span>
             {artifactCount > 0 && (
-              <span className="text-slate-400 dark:text-zinc-500">
-                · {artifactCount} {artifactCount === 1 ? 'artifact' : 'artifacts'}
-              </span>
+              <>
+                <span aria-hidden className="text-slate-200 dark:text-zinc-700">·</span>
+                <span>{artifactCount} {artifactCount === 1 ? 'artifact' : 'artifacts'}</span>
+              </>
             )}
+          </div>
+          <span className="text-sm text-slate-400 dark:text-zinc-500 tabular-nums">
+            {formatRelativeTime(project.updatedAt)}
           </span>
-          <span aria-hidden>·</span>
-          <span>{formatRelativeTime(project.updatedAt)}</span>
         </div>
       </Link>
 
@@ -152,21 +163,21 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         >
           {confirmDelete ? (
             <div className="p-3 flex flex-col gap-2">
-              <p className="text-xs text-slate-700 dark:text-zinc-300 leading-snug">
+              <p className="text-sm text-slate-700 dark:text-zinc-300 leading-snug">
                 Delete <span className="font-semibold">"{project.title}"</span>? This cannot be undone.
               </p>
               <div className="flex gap-1.5">
                 <button
                   type="button"
                   onClick={confirmAndDelete}
-                  className="flex-1 py-1 rounded text-xs font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors"
+                  className="flex-1 py-1 rounded text-sm font-semibold bg-red-600 hover:bg-red-700 text-white transition-colors"
                 >
                   Delete
                 </button>
                 <button
                   type="button"
                   onClick={e => { e.preventDefault(); e.stopPropagation(); setConfirmDelete(false) }}
-                  className="flex-1 py-1 rounded text-xs font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors"
+                  className="flex-1 py-1 rounded text-sm font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors"
                 >
                   Cancel
                 </button>
@@ -177,7 +188,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               <button
                 type="button"
                 onClick={startRename}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5 text-slate-500 dark:text-zinc-400 shrink-0" />
                 Rename
@@ -186,7 +197,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               <button
                 type="button"
                 onClick={startDelete}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5 shrink-0" />
                 Delete project
@@ -198,8 +209,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     </div>
   )
 }
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getLatestTask(project: Project): Task | null {
   if (!project.tasks.length) return null

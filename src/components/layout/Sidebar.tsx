@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+﻿import { useState, useRef } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { BarChart3, Bell, BookOpen, ChevronLeft, ChevronRight, Sun, Moon, Settings } from 'lucide-react'
 import pulseLogo from '../../assets/Pulse (Logo).svg'
@@ -54,7 +54,7 @@ export default function Sidebar() {
             to={to}
             title={!expanded ? label : undefined}
             className={({ isActive }) =>
-              `flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors whitespace-nowrap ${
+              `flex items-center gap-2 px-2 py-1.5 rounded-md text-base transition-colors whitespace-nowrap ${
                 !expanded ? 'justify-center' : ''
               } ${
                 isActive
@@ -80,7 +80,7 @@ export default function Sidebar() {
             onClick={() => setNotifOpen(o => !o)}
             title="Notifications"
             aria-label="Notifications"
-            className={`cursor-pointer relative w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors whitespace-nowrap ${!expanded ? 'justify-center' : ''} ${
+            className={`cursor-pointer relative w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-base transition-colors whitespace-nowrap ${!expanded ? 'justify-center' : ''} ${
               notifOpen
                 ? 'bg-slate-100 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100'
                 : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-slate-900 dark:hover:text-zinc-100'
@@ -89,7 +89,7 @@ export default function Sidebar() {
             <span className="relative shrink-0">
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-blue-600 text-[8px] font-bold text-white leading-none">
+                <span className="absolute -top-1 -right-1 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-blue-600 text-xs font-bold text-white leading-none">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -110,7 +110,7 @@ export default function Sidebar() {
           onClick={toggle}
           title={isDark ? 'Light mode' : 'Dark mode'}
           aria-label="Toggle theme"
-          className={`cursor-pointer w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap ${!expanded ? 'justify-center' : ''}`}
+          className={`cursor-pointer w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-base text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-slate-900 dark:hover:text-zinc-100 transition-colors whitespace-nowrap ${!expanded ? 'justify-center' : ''}`}
         >
           {isDark ? <Sun className="w-4 h-4 shrink-0" /> : <Moon className="w-4 h-4 shrink-0" />}
           {expanded && <span>{isDark ? 'Light mode' : 'Dark mode'}</span>}
@@ -119,7 +119,7 @@ export default function Sidebar() {
           to="/settings"
           title={!expanded ? 'Settings' : undefined}
           className={({ isActive }) =>
-            `flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors whitespace-nowrap ${
+            `flex items-center gap-2 px-2 py-1.5 rounded-md text-base transition-colors whitespace-nowrap ${
               !expanded ? 'justify-center' : ''
             } ${
               isActive

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+﻿import { useState, useMemo } from 'react'
 import React from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -21,7 +21,7 @@ export default function ArtifactTab({ artifact, version }: ArtifactTabProps) {
   if (!artifact || !version) {
     return (
       <div className="flex-1 flex items-center justify-center px-8 py-16 text-center">
-        <p className="text-sm text-slate-500 dark:text-zinc-400">No artifact available.</p>
+        <p className="text-base text-slate-500 dark:text-zinc-400">No artifact available.</p>
       </div>
     )
   }
@@ -34,15 +34,15 @@ export default function ArtifactTab({ artifact, version }: ArtifactTabProps) {
         <EditableTitle artifact={artifact} />
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           <KindBadge kind={artifact.kind} />
-          <span className="text-xs text-slate-500 dark:text-zinc-400">
+          <span className="text-sm text-slate-500 dark:text-zinc-400">
             {version.wordCount.toLocaleString()} words
           </span>
           <Dot />
-          <span className="text-xs text-slate-500 dark:text-zinc-400">
+          <span className="text-sm text-slate-500 dark:text-zinc-400">
             v{version.versionNumber}
           </span>
           <Dot />
-          <span className="text-xs text-slate-500 dark:text-zinc-400">
+          <span className="text-sm text-slate-500 dark:text-zinc-400">
             {new Date(version.createdAt).toLocaleDateString('en-US', {
               month: 'short', day: 'numeric', year: 'numeric',
             })}
@@ -98,7 +98,7 @@ function EditableTitle({ artifact }: { artifact: Artifact }) {
           if (e.key === 'Enter') save()
           if (e.key === 'Escape') setEditing(false)
         }}
-        className="w-full bg-transparent outline-none border-b-2 border-blue-400 dark:border-blue-600 text-lg font-semibold text-slate-900 dark:text-zinc-50 leading-snug"
+        className="w-full bg-transparent outline-none border-b-2 border-blue-400 dark:border-blue-600 text-xl font-semibold text-slate-900 dark:text-zinc-50 leading-snug"
       />
     )
   }
@@ -108,7 +108,7 @@ function EditableTitle({ artifact }: { artifact: Artifact }) {
       type="button"
       onClick={startEdit}
       title="Click to rename"
-      className="text-left w-full text-lg font-semibold text-slate-900 dark:text-zinc-50 leading-snug hover:text-blue-800 dark:hover:text-blue-400 transition-colors"
+      className="text-left w-full text-xl font-semibold text-slate-900 dark:text-zinc-50 leading-snug hover:text-blue-800 dark:hover:text-blue-400 transition-colors"
     >
       {artifact.title}
     </button>
@@ -137,7 +137,7 @@ function MarkdownBody({ content, artifactId, versionId }: {
 function buildComponents(artifactId: string, versionId: string): Components {
   return {
     h1: ({ children }) => (
-      <h1 className="text-xl font-bold text-slate-900 dark:text-zinc-50 mt-0 mb-4">
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-zinc-50 mt-0 mb-4">
         {children}
       </h1>
     ),
@@ -149,13 +149,13 @@ function buildComponents(artifactId: string, versionId: string): Components {
     ),
 
     h3: ({ children }) => (
-      <h3 className="text-sm font-semibold text-slate-800 dark:text-zinc-100 mt-5 mb-2">
+      <h3 className="text-base font-semibold text-slate-800 dark:text-zinc-100 mt-5 mb-2">
         {children}
       </h3>
     ),
 
     p: ({ children }) => (
-      <p className="text-sm text-slate-700 dark:text-zinc-300 leading-relaxed mb-3">
+      <p className="text-base text-slate-700 dark:text-zinc-300 leading-relaxed mb-3">
         {children}
       </p>
     ),
@@ -167,13 +167,13 @@ function buildComponents(artifactId: string, versionId: string): Components {
     em: ({ children }) => <em className="italic">{children}</em>,
 
     ul: ({ children }) => (
-      <ul className="list-disc pl-5 text-sm text-slate-700 dark:text-zinc-300 leading-relaxed mb-3 flex flex-col gap-0.5">
+      <ul className="list-disc pl-5 text-base text-slate-700 dark:text-zinc-300 leading-relaxed mb-3 flex flex-col gap-0.5">
         {children}
       </ul>
     ),
 
     ol: ({ children }) => (
-      <ol className="list-decimal pl-5 text-sm text-slate-700 dark:text-zinc-300 leading-relaxed mb-3 flex flex-col gap-0.5">
+      <ol className="list-decimal pl-5 text-base text-slate-700 dark:text-zinc-300 leading-relaxed mb-3 flex flex-col gap-0.5">
         {children}
       </ol>
     ),
@@ -187,20 +187,20 @@ function buildComponents(artifactId: string, versionId: string): Components {
     ),
 
     code: ({ children }) => (
-      <code className="font-mono text-[12px] bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-slate-700 dark:text-zinc-300">
+      <code className="font-mono text-sm bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-slate-700 dark:text-zinc-300">
         {children}
       </code>
     ),
 
     pre: ({ children }) => (
-      <pre className="bg-slate-50 dark:bg-zinc-800/60 border border-slate-100 dark:border-zinc-700/50 rounded-lg p-4 overflow-x-auto mb-4 text-xs font-mono leading-relaxed text-slate-700 dark:text-zinc-300">
+      <pre className="bg-slate-50 dark:bg-zinc-800/60 border border-slate-100 dark:border-zinc-700/50 rounded-lg p-4 overflow-x-auto mb-4 text-sm font-mono leading-relaxed text-slate-700 dark:text-zinc-300">
         {children}
       </pre>
     ),
 
     table: ({ children }) => (
       <div className="overflow-x-auto mb-5 rounded-lg border border-slate-200 dark:border-zinc-700/60">
-        <table className="w-full text-sm border-collapse">{children}</table>
+        <table className="w-full text-base border-collapse">{children}</table>
       </div>
     ),
 
@@ -211,13 +211,13 @@ function buildComponents(artifactId: string, versionId: string): Components {
     tr: ({ children }) => <tr>{children}</tr>,
 
     th: ({ children }) => (
-      <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400 px-3 py-2.5 border-b border-slate-200 dark:border-zinc-700">
+      <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400 px-3 py-2.5 border-b border-slate-200 dark:border-zinc-700">
         {children}
       </th>
     ),
 
     td: ({ children }) => (
-      <td className="text-xs text-slate-700 dark:text-zinc-300 px-3 py-2.5 border-b border-slate-100 dark:border-zinc-800/60 last:border-b-0 [tr:last-child_&]:border-b-0">
+      <td className="text-sm text-slate-700 dark:text-zinc-300 px-3 py-2.5 border-b border-slate-100 dark:border-zinc-800/60 last:border-b-0 [tr:last-child_&]:border-b-0">
         {children}
       </td>
     ),
@@ -259,7 +259,7 @@ function H2WithAnchor({ children, artifactId, versionId }: {
   return (
     <h2
       id={slug}
-      className="group flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-zinc-50 mt-7 mb-3"
+      className="group flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-zinc-50 mt-7 mb-3"
     >
       <span>{children}</span>
       <button
@@ -297,12 +297,12 @@ function slugify(text: string): string {
 
 function KindBadge({ kind }: { kind: ArtifactKind }) {
   return (
-    <span className="text-xs font-medium px-1.5 py-0.5 rounded-sm bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400">
+    <span className="text-sm font-medium px-1.5 py-0.5 rounded-sm bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400">
       {ARTIFACT_KIND_LABELS[kind]}
     </span>
   )
 }
 
 function Dot() {
-  return <span className="text-xs text-slate-300 dark:text-zinc-600" aria-hidden>·</span>
+  return <span className="text-sm text-slate-300 dark:text-zinc-600" aria-hidden>·</span>
 }

@@ -1,4 +1,4 @@
-import type { TaskPhase } from '../types'
+﻿import type { TaskPhase } from '../types'
 import { TASK_PHASE_LABELS } from '../types'
 
 interface BadgeConfig {
@@ -27,7 +27,7 @@ export function PhaseBadge({ phase, className = '' }: PhaseBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold shrink-0 ${containerClass} ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold shrink-0 ${containerClass} ${className}`}
     >
       {dotClass && (
         <span className={`w-1.5 h-1.5 rounded-full ${dotClass}`} />

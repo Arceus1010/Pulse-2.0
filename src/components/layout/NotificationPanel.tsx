@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { Bell, Check, Clock, X, AlertCircle, CheckCircle } from 'lucide-react'
@@ -91,11 +91,11 @@ export default function NotificationPanel({ onClose, sidebarWidth, buttonRef }: 
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-zinc-800 shrink-0">
           <div className="flex items-center gap-2">
-            <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
               Notifications
             </h2>
             {unreadCount > 0 && (
-              <span className="inline-flex items-center justify-center min-w-4 h-4 px-1 rounded text-[9px] font-bold text-white bg-blue-600 dark:bg-blue-500">
+              <span className="inline-flex items-center justify-center min-w-4 h-4 px-1 rounded text-xs font-bold text-white bg-blue-600 dark:bg-blue-500">
                 {unreadCount}
               </span>
             )}
@@ -116,7 +116,7 @@ export default function NotificationPanel({ onClose, sidebarWidth, buttonRef }: 
             <button
               type="button"
               onClick={handleMarkAllRead}
-              className="text-[11px] font-medium text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors flex items-center gap-1"
+              className="text-xs font-medium text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors flex items-center gap-1"
             >
               <Check className="w-3 h-3" />
               Mark all read
@@ -129,7 +129,7 @@ export default function NotificationPanel({ onClose, sidebarWidth, buttonRef }: 
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
               <Bell className="w-5 h-5 text-slate-300 dark:text-zinc-600 mb-2" />
-              <p className="text-xs text-slate-500 dark:text-zinc-400">No notifications yet</p>
+              <p className="text-sm text-slate-500 dark:text-zinc-400">No notifications yet</p>
             </div>
           ) : (
             <div className="divide-y divide-slate-100 dark:divide-zinc-800">
@@ -181,14 +181,14 @@ function NotifRow({
       {/* Content */}
       <div className="flex-1 min-w-0 flex flex-col gap-0.5">
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-semibold text-slate-700 dark:text-zinc-200">
+          <span className="text-xs font-semibold text-slate-700 dark:text-zinc-200">
             {typeConfig.label}
           </span>
-          <span className="text-[10px] text-slate-400 dark:text-zinc-500 shrink-0">
+          <span className="text-xs text-slate-400 dark:text-zinc-500 shrink-0">
             {relativeTime(notif.createdAt)}
           </span>
         </div>
-        <p className="text-[11px] text-slate-600 dark:text-zinc-300 leading-relaxed line-clamp-2">
+        <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed line-clamp-2">
           {notif.message}
         </p>
       </div>

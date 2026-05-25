@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Download, ChevronDown, Check, Link2, FileText, Braces, Printer } from 'lucide-react'
 
@@ -192,7 +192,7 @@ setTimeout(function(){window.print()},400);
                 : 'cursor-default'
             }`}
           >
-            <span className="text-xs font-medium text-slate-700 dark:text-zinc-200 truncate">
+            <span className="text-sm font-medium text-slate-700 dark:text-zinc-200 truncate">
               {artifact?.title ?? 'Artifact'}
             </span>
             {project.artifacts.length > 1 && (
@@ -220,7 +220,7 @@ setTimeout(function(){window.print()},400);
                   key={v.id}
                   type="button"
                   onClick={() => selectVersion(v.id)}
-                  className={`px-1.5 py-0.5 rounded text-xs font-medium transition-colors ${
+                  className={`px-1.5 py-0.5 rounded text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-200'
                       : 'text-slate-500 dark:text-zinc-400 hover:text-slate-600 dark:hover:text-zinc-300'
@@ -274,13 +274,13 @@ setTimeout(function(){window.print()},400);
       {/* ── Old-version banner ───────────────────────────────────────── */}
       {isOldVersion && (
         <div className="shrink-0 flex items-center gap-3 px-5 py-2 bg-amber-50 dark:bg-amber-950/20 border-b border-amber-100 dark:border-amber-900/30">
-          <span className="text-xs text-amber-700 dark:text-amber-400">
+          <span className="text-sm text-amber-700 dark:text-amber-400">
             Viewing v{version?.versionNumber} — this is not the current version.
           </span>
           <button
             type="button"
             onClick={() => setSelectedVersionId(null)}
-            className="text-xs font-medium text-amber-700 dark:text-amber-400 hover:underline"
+            className="text-sm font-medium text-amber-700 dark:text-amber-400 hover:underline"
           >
             Back to current →
           </button>
@@ -344,7 +344,7 @@ function ExportItem({ icon, label, onClick }: {
     <button
       type="button"
       onClick={onClick}
-      className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-xs text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"
+      className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-zinc-800 transition-colors"
     >
       <span className="text-slate-500 dark:text-zinc-400 shrink-0">{icon}</span>
       {label}
@@ -390,10 +390,10 @@ function ArtifactMenu({ artifacts, selectedId, onSelect, onClose }: {
             }`}
           >
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-slate-800 dark:text-zinc-100 truncate">
+              <p className="text-sm font-medium text-slate-800 dark:text-zinc-100 truncate">
                 {a.title}
               </p>
-              <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+              <p className="text-sm text-slate-500 dark:text-zinc-400 mt-0.5">
                 {ARTIFACT_KIND_LABELS[a.kind]}
                 {' · '}
                 {a.versions.length} {a.versions.length === 1 ? 'version' : 'versions'}
@@ -474,12 +474,12 @@ function SharePopover({ artifact, version }: { artifact: Artifact | null; versio
               readOnly
               value={url}
               onFocus={e => e.target.select()}
-              className="flex-1 min-w-0 text-xs bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded px-2 py-1.5 text-slate-600 dark:text-zinc-300 outline-none truncate"
+              className="flex-1 min-w-0 text-sm bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded px-2 py-1.5 text-slate-600 dark:text-zinc-300 outline-none truncate"
             />
             <button
               type="button"
               onClick={handleCopy}
-              className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors whitespace-nowrap"
+              className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors whitespace-nowrap"
             >
               {copied ? <><Check className="w-3 h-3" />Copied</> : 'Copy'}
             </button>
@@ -487,7 +487,7 @@ function SharePopover({ artifact, version }: { artifact: Artifact | null; versio
 
           {/* Expiry row */}
           <div className="flex flex-col gap-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
+            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
               Link expires
             </span>
             <div className="flex gap-1.5">
@@ -496,7 +496,7 @@ function SharePopover({ artifact, version }: { artifact: Artifact | null; versio
                   key={opt.value}
                   type="button"
                   onClick={() => setExpiry(opt.value)}
-                  className={`flex-1 px-2 py-1 rounded text-xs font-medium border transition-colors ${
+                  className={`flex-1 px-2 py-1 rounded text-sm font-medium border transition-colors ${
                     expiry === opt.value
                       ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800/40 text-blue-700 dark:text-blue-400'
                       : 'bg-white dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600'

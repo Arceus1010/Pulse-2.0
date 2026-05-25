@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { X, TrendingUp, TrendingDown, Minus, AlertTriangle } from 'lucide-react'
 import PestleCard from '../components/PestleCard'
 import AnalyticsRadar from '../components/charts/AnalyticsRadar'
@@ -75,18 +75,18 @@ function PestleDetail({ entry, onClose }: { entry: PestleEntry; onClose: () => v
         style={{ borderLeftWidth: 3, borderLeftColor: color }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-md flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ background: color }}>
+          <div className="w-8 h-8 rounded-md flex items-center justify-center text-white text-base font-bold shrink-0" style={{ background: color }}>
             {letter}
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">{entry.name}</h2>
-            <p className="text-[10px] text-slate-400 dark:text-zinc-500">
+            <h2 className="text-base font-semibold text-slate-900 dark:text-zinc-100">{entry.name}</h2>
+            <p className="text-xs text-slate-400 dark:text-zinc-500">
               {entry.count.toLocaleString()} posts · {entry.percentage}% of total
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className={`hidden sm:flex items-center gap-1 text-[11px] font-semibold ${riskClass}`}>
+          <span className={`hidden sm:flex items-center gap-1 text-xs font-semibold ${riskClass}`}>
             <RiskIcon className="w-3.5 h-3.5" />
             {riskLabel}
           </span>
@@ -103,10 +103,10 @@ function PestleDetail({ entry, onClose }: { entry: PestleEntry; onClose: () => v
       {radar && (
         <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/40">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
+            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
               Sentiment Signal
             </span>
-            <div className="flex items-center gap-3 text-[10px] font-semibold">
+            <div className="flex items-center gap-3 text-xs font-semibold">
               <span className="text-emerald-600 dark:text-emerald-400">+{radar.positive} positive</span>
               <span className="text-red-500 dark:text-red-400">−{radar.negative} negative</span>
             </div>
@@ -125,24 +125,24 @@ function PestleDetail({ entry, onClose }: { entry: PestleEntry; onClose: () => v
 
       {/* Insight */}
       <div className="p-4 border-b border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/20">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-2">Key Insight</p>
-        <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{entry.insight}</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-2">Key Insight</p>
+        <p className="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed">{entry.insight}</p>
       </div>
 
       {/* Posts */}
       <div>
-        <p className="px-4 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
+        <p className="px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
           Representative Posts
         </p>
         {entry.posts.map((post, i) => (
           <div key={i} className="px-4 py-3 border-t border-slate-100 dark:border-zinc-800 flex flex-col gap-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200">{post.author}</span>
-              <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 text-[10px] font-semibold uppercase">
+              <span className="text-sm font-semibold text-slate-800 dark:text-zinc-200">{post.author}</span>
+              <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 text-xs font-semibold uppercase">
                 {post.platform}
               </span>
             </div>
-            <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{post.text}</p>
+            <p className="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed">{post.text}</p>
             <SentimentBadge sentiment={post.sentiment} className="self-start" />
           </div>
         ))}
@@ -176,10 +176,10 @@ export default function PestlePage() {
             key={item.label}
             className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-3"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1">
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1">
               {item.label}
             </p>
-            <p className="text-sm font-bold text-slate-900 dark:text-zinc-100 truncate">{item.value}</p>
+            <p className="text-base font-bold text-slate-900 dark:text-zinc-100 truncate">{item.value}</p>
           </div>
         ))}
       </div>
@@ -187,10 +187,10 @@ export default function PestlePage() {
       {/* Overview cards */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
             PESTLE Breakdown
           </h2>
-          <span className="text-[10px] text-slate-400 dark:text-zinc-500">Select a dimension to explore ↓</span>
+          <span className="text-xs text-slate-400 dark:text-zinc-500">Select a dimension to explore ↓</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {pestleData.map(entry => (
@@ -227,15 +227,15 @@ export default function PestlePage() {
               return (
                 <div key={item.dim} className="flex items-center gap-2.5">
                   <span
-                    className="w-6 h-6 rounded flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                    className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold shrink-0"
                     style={{ background: dimColor }}
                   >
                     {dimLetter}
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200">{item.dim}</span>
-                      <span className={`text-[10px] font-semibold ${riskClass}`}>{riskLabel}</span>
+                      <span className="text-sm font-semibold text-slate-800 dark:text-zinc-200">{item.dim}</span>
+                      <span className={`text-xs font-semibold ${riskClass}`}>{riskLabel}</span>
                     </div>
                     <ProgressBar
                       segments={[

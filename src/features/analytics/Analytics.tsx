@@ -1,11 +1,14 @@
-import { useState, useRef, Suspense } from 'react'
+﻿import { useState, useRef, Suspense } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { X, Zap, Search } from 'lucide-react'
+import { X, Zap, Search, RotateCcw } from 'lucide-react'
 import { useAnalyticsFilters } from './hooks/useAnalyticsFilters'
+import { DEFAULT_FILTER } from './hooks/useAnalyticsFilters'
 import { ALL_PLATFORMS, PLATFORM_LABELS } from './constants'
 import type { Platform } from './types'
 import DateRangePicker from '../../components/ui/DateRangePicker'
 import MultiSelect from '../../components/ui/MultiSelect'
+import Button from '../../components/ui/Button'
+import PulseAIWidget from './components/pulse-ai/PulseAIWidget'
 
 const NAV_ITEMS = [
   { to: '/analytics/overview', label: 'Overview' },
@@ -25,12 +28,23 @@ export default function Analytics() {
   const [kwInput, setKwInput] = useState('')
   const [local, setLocal] = useState({ ...filter })
   const [analysing, setAnalysing] = useState(false)
+  const [hasAnalysed, setHasAnalysed] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const resetDashboard = () => {
+    setLocal({ ...DEFAULT_FILTER })
+    setFilter(DEFAULT_FILTER)
+    setHasAnalysed(false)
+    setKwInput('')
+  }
 
   const runAnalysis = () => {
     setFilter(local)
     setAnalysing(true)
-    setTimeout(() => setAnalysing(false), ANALYSIS_DURATION_MS)
+    setTimeout(() => {
+      setAnalysing(false)
+      setHasAnalysed(true)
+    }, ANALYSIS_DURATION_MS)
   }
 
   const addKw = () => {
@@ -63,7 +77,7 @@ export default function Analytics() {
                 <span
                   key={kw}
                   onClick={e => e.stopPropagation()}
-                  className="inline-flex items-center gap-1 h-6 pl-2.5 pr-1.5 rounded-sm bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-400 text-xs font-medium select-none"
+                  className="inline-flex items-center gap-1 h-6 pl-2.5 pr-1.5 rounded-sm bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-400 text-sm font-medium select-none"
                 >
                   {kw}
                   <button
@@ -84,11 +98,11 @@ export default function Analytics() {
                     removeKw(local.keywords[local.keywords.length - 1])
                 }}
                 placeholder={local.keywords.length === 0 ? 'Search keywords…' : 'Add more…'}
-                className="h-6 bg-transparent text-xs text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 dark:placeholder:text-zinc-500 outline-none min-w-25"
+                className="h-6 bg-transparent text-sm text-slate-800 dark:text-zinc-200 placeholder:text-slate-400 dark:placeholder:text-zinc-500 outline-none min-w-25"
               />
             </div>
 
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 shrink-0 select-none">
+            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 shrink-0 select-none">
               Keywords
             </span>
           </div>
@@ -120,15 +134,49 @@ export default function Analytics() {
 
           {/* Run */}
           <div className="flex items-center px-4 py-3 shrink-0">
-            <button
+            <Button
               onClick={runAnalysis}
-              disabled={analysing}
-              className="h-8 px-5 rounded-sm bg-blue-800 hover:bg-blue-900 disabled:opacity-60 text-white text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer disabled:cursor-not-allowed"
+              disabled={local.keywords.length === 0}
+              loading={analysing}
+              icon={<Zap className="fill-white stroke-none" />}
             >
-              <Zap className={`w-3.5 h-3.5 fill-white stroke-none ${analysing ? 'animate-pulse' : ''}`} />
               {analysing ? 'Analysing…' : 'Analyse'}
-            </button>
+            </Button>
           </div>
+
+          {/* Active context + Reset */}
+          {hasAnalysed && (
+            <>
+              <div className="w-px bg-slate-200 dark:bg-zinc-800 self-stretch shrink-0" />
+              <div className="flex items-center gap-2.5 px-4 py-3 shrink-0">
+                <div className="flex items-center gap-1.5">
+                  {filter.keywords.map(kw => (
+                    <span
+                      key={kw}
+                      className="inline-flex items-center h-6 px-2 rounded-sm bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-400 text-xs font-medium"
+                    >
+                      {kw}
+                    </span>
+                  ))}
+                  {(filter.dateFrom || filter.dateTo) && (
+                    <span className="text-xs text-slate-400 dark:text-zinc-500">
+                      {filter.dateFrom && filter.dateTo
+                        ? `${filter.dateFrom} – ${filter.dateTo}`
+                        : filter.dateFrom || filter.dateTo}
+                    </span>
+                  )}
+                </div>
+                <Button
+                  onClick={resetDashboard}
+                  variant="ghost-danger"
+                  size="xs"
+                  icon={<RotateCcw />}
+                >
+                  Reset
+                </Button>
+              </div>
+            </>
+          )}
 
         </div>
 
@@ -140,7 +188,7 @@ export default function Analytics() {
               to={item.to}
               end
               className={({ isActive }) =>
-                `px-3 py-2.5 text-xs font-medium border-b-2 -mb-px transition-colors whitespace-nowrap ${
+                `px-3 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap ${
                   isActive
                     ? 'border-blue-800 dark:border-blue-400 text-blue-800 dark:text-blue-400'
                     : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-200'
@@ -152,26 +200,46 @@ export default function Analytics() {
           ))}
         </nav>
 
+
       </div>
 
       <div className="flex-1 p-6 relative">
-        <Suspense fallback={
-          <div className="flex items-center justify-center h-64">
-            <div className="flex items-center gap-1.5">
-              {[0, 1, 2, 3, 4].map(i => (
-                <div
-                  key={i}
-                  className="w-1 rounded-full bg-blue-400 animate-bounce"
-                  style={{ height: 16, animationDelay: `${i * 80}ms` }}
-                />
-              ))}
-            </div>
-          </div>
-        }>
-          <Outlet />
-        </Suspense>
-        {analysing && (
-          <div className="absolute inset-0 z-30 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+        {hasAnalysed ? (
+          <>
+            <Suspense fallback={
+              <div className="flex items-center justify-center h-64">
+                <div className="flex items-center gap-1.5">
+                  {[0, 1, 2, 3, 4].map(i => (
+                    <div
+                      key={i}
+                      className="w-1 rounded-full bg-blue-400 animate-bounce"
+                      style={{ height: 16, animationDelay: `${i * 80}ms` }}
+                    />
+                  ))}
+                </div>
+              </div>
+            }>
+              <Outlet />
+            </Suspense>
+            {analysing && (
+              <div className="absolute inset-0 z-30 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  {[0, 1, 2, 3, 4].map(i => (
+                    <div
+                      key={i}
+                      className="w-1 rounded-full bg-blue-600 animate-bounce"
+                      style={{ height: 20, animationDelay: `${i * 80}ms` }}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm font-semibold text-slate-500 dark:text-zinc-400 tracking-widest uppercase select-none">
+                  Running analysis…
+                </p>
+              </div>
+            )}
+          </>
+        ) : analysing ? (
+          <div className="flex flex-col items-center justify-center h-64 gap-3">
             <div className="flex items-center gap-1.5">
               {[0, 1, 2, 3, 4].map(i => (
                 <div
@@ -181,12 +249,20 @@ export default function Analytics() {
                 />
               ))}
             </div>
-            <p className="text-xs font-semibold text-slate-500 dark:text-zinc-400 tracking-widest uppercase select-none">
+            <p className="text-sm font-semibold text-slate-500 dark:text-zinc-400 tracking-widest uppercase select-none">
               Running analysis…
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-64 gap-3 text-center">
+            <Search className="w-8 h-8 text-slate-300 dark:text-zinc-600" />
+            <p className="text-base font-medium text-slate-400 dark:text-zinc-500">
+              Enter keywords, set your filters, and click <span className="text-blue-700 dark:text-blue-400 font-semibold">Analyse</span> to get started.
             </p>
           </div>
         )}
       </div>
+      <PulseAIWidget hasAnalysed={hasAnalysed} keywords={filter.keywords} />
     </div>
   )
 }

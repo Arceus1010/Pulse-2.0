@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Square, CheckSquare, ArrowRight } from 'lucide-react'
+import Button from '../../../components/ui/Button'
 
 import type { PreLaunchMode } from '../types'
 import Tooltip from '../../../components/ui/Tooltip'
@@ -93,7 +94,7 @@ export default function Dispatcher({ onDispatch, prefillPrompt }: DispatcherProp
         onKeyDown={handleKeyDown}
         placeholder="What would you like to research?"
         rows={4}
-        className="w-full resize-none bg-transparent px-4 pt-4 pb-3 text-sm text-slate-800 dark:text-zinc-100 placeholder:text-slate-500 dark:placeholder:text-zinc-400 outline-none"
+        className="w-full resize-none bg-transparent px-4 pt-4 pb-3 text-base text-slate-800 dark:text-zinc-100 placeholder:text-slate-500 dark:placeholder:text-zinc-400 outline-none"
       />
 
       {/* Controls row */}
@@ -122,7 +123,7 @@ export default function Dispatcher({ onDispatch, prefillPrompt }: DispatcherProp
         <div className="flex-1" />
 
         {/* Character count / hint */}
-        <span className={`text-[11px] tabular-nums shrink-0 transition-colors ${prompt.length > 0 ? charCountClass : 'text-slate-500 dark:text-zinc-400'}`}>
+        <span className={`text-xs tabular-nums shrink-0 transition-colors ${prompt.length > 0 ? charCountClass : 'text-slate-500 dark:text-zinc-400'}`}>
           {prompt.length > 0
             ? `${prompt.length.toLocaleString()} / ${MAX_PROMPT_LENGTH.toLocaleString()}`
             : '⌘ Enter to dispatch'}
@@ -134,7 +135,7 @@ export default function Dispatcher({ onDispatch, prefillPrompt }: DispatcherProp
         {/* Review before launch toggle */}
         <button
           onClick={() => setReviewBeforeLaunch(v => !v)}
-          className={`flex items-center gap-1.5 text-xs font-medium transition-colors shrink-0 ${
+          className={`flex items-center gap-1.5 text-sm font-medium transition-colors shrink-0 ${
             reviewBeforeLaunch
               ? 'text-amber-700 dark:text-amber-400'
               : 'text-slate-500 dark:text-zinc-400 hover:text-slate-600 dark:hover:text-zinc-300'
@@ -148,14 +149,15 @@ export default function Dispatcher({ onDispatch, prefillPrompt }: DispatcherProp
         </button>
 
         {/* Dispatch button */}
-        <button
+        <Button
           onClick={handleDispatch}
           disabled={!canDispatch}
-          className="flex items-center gap-1.5 h-7 px-3.5 rounded-sm bg-blue-800 hover:bg-blue-900 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors shrink-0"
+          iconRight={<ArrowRight />}
+          size="sm"
+          className="shrink-0"
         >
           Dispatch
-          <ArrowRight className="w-3.5 h-3.5" />
-        </button>
+        </Button>
 
       </div>
     </div>
@@ -174,7 +176,7 @@ function SourceChip({ label, active, onClick }: SourceChipProps) {
   return (
     <button
       onClick={onClick}
-      className={`h-6 px-2.5 rounded text-xs font-medium transition-colors ${
+      className={`h-6 px-2.5 rounded text-sm font-medium transition-colors ${
         active
           ? 'bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-400'
           : 'bg-transparent border border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-400 hover:border-slate-300 dark:hover:border-zinc-600 hover:text-slate-700 dark:hover:text-zinc-200'

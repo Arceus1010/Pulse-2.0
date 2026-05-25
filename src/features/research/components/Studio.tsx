@@ -1,4 +1,4 @@
-import { Layers, AlertCircle, XCircle, Clock } from 'lucide-react'
+﻿import { Layers, AlertCircle, XCircle, Clock } from 'lucide-react'
 
 import type { Project, Task } from '../types'
 import type { SimulatorControls } from '../simulator/useTaskSimulator'
@@ -37,7 +37,7 @@ export default function Studio({ project, task, simulatorControls, requestedTab,
 
   const headerAction = isPreLaunch && simulatorControls.countdownSeconds !== null
     ? (
-      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400">
+      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400">
         <Clock className="w-3 h-3" />
         Launching in {simulatorControls.countdownSeconds}s
       </span>
@@ -99,8 +99,8 @@ function EmptyState() {
       <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-zinc-800 flex items-center justify-center text-slate-500 dark:text-zinc-400">
         <Layers className="w-5 h-5" />
       </div>
-      <p className="text-sm font-medium text-slate-500 dark:text-zinc-400">Your artifact will appear here</p>
-      <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-88 leading-relaxed">
+      <p className="text-base font-medium text-slate-500 dark:text-zinc-400">Your artifact will appear here</p>
+      <p className="text-sm text-slate-500 dark:text-zinc-400 max-w-88 leading-relaxed">
         Dispatch a prompt from the activity panel to start a research task.
       </p>
     </div>
@@ -121,7 +121,7 @@ function QueuedState() {
           />
         ))}
       </div>
-      <p className="text-xs text-slate-500 dark:text-zinc-400">Waiting to start…</p>
+      <p className="text-sm text-slate-500 dark:text-zinc-400">Waiting to start…</p>
     </div>
   )
 }
@@ -132,9 +132,9 @@ function DoneFallback() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-3 px-8 py-16 text-center">
       <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 flex items-center justify-center">
-        <span className="text-emerald-600 dark:text-emerald-400 text-lg">✓</span>
+        <span className="text-emerald-600 dark:text-emerald-400 text-xl">✓</span>
       </div>
-      <p className="text-sm font-medium text-slate-700 dark:text-zinc-200">Artifact ready</p>
+      <p className="text-base font-medium text-slate-700 dark:text-zinc-200">Artifact ready</p>
     </div>
   )
 }
@@ -147,9 +147,9 @@ function FailedState({ task }: { task: Task }) {
       <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/40 flex items-center justify-center text-red-500 dark:text-red-400">
         <AlertCircle className="w-5 h-5" />
       </div>
-      <p className="text-sm font-medium text-red-700 dark:text-red-400">Task failed</p>
+      <p className="text-base font-medium text-red-700 dark:text-red-400">Task failed</p>
       {task.failureReason && (
-        <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-88 leading-relaxed">
+        <p className="text-sm text-slate-500 dark:text-zinc-400 max-w-88 leading-relaxed">
           {task.failureReason}
         </p>
       )}
@@ -165,8 +165,8 @@ function CanceledState() {
       <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center text-slate-500 dark:text-zinc-400">
         <XCircle className="w-5 h-5" />
       </div>
-      <p className="text-sm font-medium text-slate-500 dark:text-zinc-400">Task canceled</p>
-      <p className="text-xs text-slate-500 dark:text-zinc-400">No artifact was produced.</p>
+      <p className="text-base font-medium text-slate-500 dark:text-zinc-400">Task canceled</p>
+      <p className="text-sm text-slate-500 dark:text-zinc-400">No artifact was produced.</p>
     </div>
   )
 }

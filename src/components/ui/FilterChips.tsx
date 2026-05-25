@@ -1,4 +1,4 @@
-interface FilterChipItem {
+﻿interface FilterChipItem {
   value: string
   label: string
   color?: string
@@ -25,7 +25,7 @@ export default function FilterChips({ items, active, onToggle, label, minActive 
   return (
     <div className={`flex items-center gap-3 ${className ?? ''}`}>
       {label && (
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 shrink-0">
+        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 shrink-0">
           {label}
         </span>
       )}
@@ -36,7 +36,7 @@ export default function FilterChips({ items, active, onToggle, label, minActive 
             <button
               key={item.value}
               onClick={() => handleToggle(item.value)}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium border capitalize transition-all ${
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border capitalize transition-all ${
                 isActive
                   ? 'bg-white dark:bg-zinc-700 border-slate-200 dark:border-zinc-600 text-slate-800 dark:text-zinc-100 shadow-sm'
                   : 'bg-transparent border-slate-200 dark:border-zinc-700 text-slate-400 dark:text-zinc-500 hover:text-slate-600 dark:hover:text-zinc-300 hover:border-slate-300 dark:hover:border-zinc-600'

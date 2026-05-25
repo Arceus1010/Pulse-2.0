@@ -1,5 +1,6 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { ChevronDown, ChevronRight, ArrowUpRight, Download } from 'lucide-react'
+import Button from '../../../components/ui/Button'
 
 import type { Task, TraceStep } from '../types'
 import { TRACE_STEP_TYPE_LABELS } from '../types'
@@ -16,7 +17,7 @@ export default function TraceTab({ task, onJumpToSection }: TraceTabProps) {
   if (!trace || trace.steps.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-2 px-8 py-16 text-center">
-        <p className="text-sm text-slate-500 dark:text-zinc-400">No trace available.</p>
+        <p className="text-base text-slate-500 dark:text-zinc-400">No trace available.</p>
       </div>
     )
   }
@@ -40,7 +41,7 @@ export default function TraceTab({ task, onJumpToSection }: TraceTabProps) {
 
       {/* Goal blockquote */}
       <blockquote className="border-l-2 border-slate-200 dark:border-zinc-700 pl-3">
-        <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed italic line-clamp-3">
+        <p className="text-sm text-slate-500 dark:text-zinc-400 leading-relaxed italic line-clamp-3">
           {task.prompt}
         </p>
       </blockquote>
@@ -48,13 +49,13 @@ export default function TraceTab({ task, onJumpToSection }: TraceTabProps) {
       {/* Summary row */}
       <div className="flex items-center gap-2.5">
         <span className="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-500 shrink-0" />
-        <span className="text-sm font-medium text-slate-700 dark:text-zinc-200">Task complete</span>
-        <span className="text-xs text-slate-500 dark:text-zinc-400">
+        <span className="text-base font-medium text-slate-700 dark:text-zinc-200">Task complete</span>
+        <span className="text-sm text-slate-500 dark:text-zinc-400">
           · {trace.steps.length} step{trace.steps.length !== 1 ? 's' : ''}
           {sourcesEvaluated > 0 && ` · ${sourcesEvaluated} sources evaluated`}
         </span>
         {trace.durationMs != null && (
-          <span className="ml-auto text-xs tabular-nums text-slate-500 dark:text-zinc-400">
+          <span className="ml-auto text-sm tabular-nums text-slate-500 dark:text-zinc-400">
             {formatDuration(trace.durationMs)}
           </span>
         )}
@@ -75,19 +76,20 @@ export default function TraceTab({ task, onJumpToSection }: TraceTabProps) {
       {/* Footer */}
       <div className="flex items-center pt-1 border-t border-slate-100 dark:border-zinc-800">
         {trace.durationMs != null && (
-          <span className="text-xs tabular-nums text-slate-500 dark:text-zinc-400">
+          <span className="text-sm tabular-nums text-slate-500 dark:text-zinc-400">
             Total: {formatDuration(trace.durationMs)}
           </span>
         )}
         <div className="flex-1" />
-        <button
+        <Button
           type="button"
           onClick={handleDownloadTrace}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-slate-500 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-700 dark:hover:text-zinc-200 transition-colors"
+          variant="ghost"
+          size="sm"
+          icon={<Download />}
         >
-          <Download className="w-3 h-3" />
           Download trace JSON
-        </button>
+        </Button>
       </div>
 
     </div>
@@ -129,11 +131,11 @@ function TraceStepCard({ step, index, onJumpToSection }: {
         <TraceStatusDot step={step} />
 
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-[11px] font-medium tabular-nums w-4 text-right shrink-0 text-slate-500 dark:text-zinc-400">
+          <span className="text-xs font-medium tabular-nums w-4 text-right shrink-0 text-slate-500 dark:text-zinc-400">
             {index + 1}
           </span>
 
-          <span className={`text-xs truncate ${
+          <span className={`text-sm truncate ${
             isConflict
               ? 'font-medium text-amber-700 dark:text-amber-400'
               : step.status === 'failed'
@@ -144,7 +146,7 @@ function TraceStepCard({ step, index, onJumpToSection }: {
           </span>
 
           {step.durationMs != null && (
-            <span className="ml-auto text-[11px] tabular-nums text-slate-500 dark:text-zinc-400 shrink-0">
+            <span className="ml-auto text-xs tabular-nums text-slate-500 dark:text-zinc-400 shrink-0">
               {formatDuration(step.durationMs)}
             </span>
           )}
@@ -161,7 +163,7 @@ function TraceStepCard({ step, index, onJumpToSection }: {
       {!expanded && (
         <div className="grid grid-cols-[0.5rem_1fr] gap-3 px-4 pb-3 pointer-events-none">
           <div />
-          <p className="pl-6 text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
+          <p className="pl-6 text-sm text-slate-500 dark:text-zinc-400 leading-relaxed">
             {deriveStepSummary(step)}
           </p>
         </div>
@@ -173,7 +175,7 @@ function TraceStepCard({ step, index, onJumpToSection }: {
           <div />
           <div className="pl-6 flex flex-col gap-3">
 
-            <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
+            <p className="text-sm text-slate-500 dark:text-zinc-400 leading-relaxed">
               {deriveStepSummary(step)}
             </p>
 
@@ -182,7 +184,7 @@ function TraceStepCard({ step, index, onJumpToSection }: {
 
             {step.reasoning && (
               <div className="rounded-md border-l-2 border-blue-200 dark:border-blue-800/60 bg-blue-50/50 dark:bg-blue-950/10 px-3 py-2">
-                <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed italic">
+                <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed italic">
                   {step.reasoning}
                 </p>
               </div>
@@ -223,7 +225,7 @@ function SectionChips({ sections, onJump }: {
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+      <span className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
         Sections
       </span>
       <div className="flex flex-wrap gap-1.5">
@@ -233,7 +235,7 @@ function SectionChips({ sections, onJump }: {
             type="button"
             disabled={!onJump}
             onClick={() => onJump?.(slugify(section))}
-            className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:text-blue-700 dark:hover:text-blue-400 transition-colors disabled:pointer-events-none"
+            className="flex items-center gap-1 px-2 py-1 rounded text-sm font-medium bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:text-blue-700 dark:hover:text-blue-400 transition-colors disabled:pointer-events-none"
           >
             <ArrowUpRight className="w-2.5 h-2.5 shrink-0" />
             {section}
@@ -250,7 +252,7 @@ function DataBlock({ label, data }: { label: string; data: Record<string, unknow
   return (
     <div className="rounded-md border border-slate-100 dark:border-zinc-700/60 overflow-hidden">
       <div className="px-2.5 py-1 bg-slate-50 dark:bg-zinc-800 border-b border-slate-100 dark:border-zinc-700/60">
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+        <span className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
           {label}
         </span>
       </div>
@@ -266,7 +268,7 @@ function DataBlock({ label, data }: { label: string; data: Record<string, unknow
 function DataEntry({ name, value, depth = 0 }: { name: string; value: unknown; depth?: number }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+      <span className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-zinc-400">
         {name}
       </span>
       <DataValue value={value} depth={depth} />
@@ -276,16 +278,16 @@ function DataEntry({ name, value, depth = 0 }: { name: string; value: unknown; d
 
 function DataValue({ value, depth = 0 }: { value: unknown; depth?: number }) {
   if (value === null || value === undefined) {
-    return <span className="text-xs text-slate-400 dark:text-zinc-500 italic">—</span>
+    return <span className="text-sm text-slate-400 dark:text-zinc-500 italic">—</span>
   }
   if (typeof value === 'string') {
-    return <p className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed break-words">{value}</p>
+    return <p className="text-sm text-slate-700 dark:text-zinc-300 leading-relaxed wrap-break-word">{value}</p>
   }
   if (typeof value === 'number') {
-    return <p className="text-xs text-slate-700 dark:text-zinc-300 tabular-nums">{value.toLocaleString()}</p>
+    return <p className="text-sm text-slate-700 dark:text-zinc-300 tabular-nums">{value.toLocaleString()}</p>
   }
   if (typeof value === 'boolean') {
-    return <p className="text-xs text-slate-700 dark:text-zinc-300">{value ? 'Yes' : 'No'}</p>
+    return <p className="text-sm text-slate-700 dark:text-zinc-300">{value ? 'Yes' : 'No'}</p>
   }
   if (Array.isArray(value)) {
     const visible  = value.slice(0, 6)
@@ -293,12 +295,12 @@ function DataValue({ value, depth = 0 }: { value: unknown; depth?: number }) {
     return (
       <ul className="flex flex-col gap-0.5 pl-3">
         {visible.map((item, i) => (
-          <li key={i} className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed list-disc list-outside">
+          <li key={i} className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed list-disc list-outside">
             {typeof item === 'string' ? item : JSON.stringify(item)}
           </li>
         ))}
         {overflow > 0 && (
-          <li className="text-xs text-slate-500 dark:text-zinc-400 italic list-none">
+          <li className="text-sm text-slate-500 dark:text-zinc-400 italic list-none">
             +{overflow} more
           </li>
         )}
@@ -315,7 +317,7 @@ function DataValue({ value, depth = 0 }: { value: unknown; depth?: number }) {
       </div>
     )
   }
-  return <p className="text-xs text-slate-500 dark:text-zinc-400 font-mono">{JSON.stringify(value)}</p>
+  return <p className="text-sm text-slate-500 dark:text-zinc-400 font-mono">{JSON.stringify(value)}</p>
 }
 
 // ─── Step summary ─────────────────────────────────────────────────────────────

@@ -4,9 +4,9 @@ import type { AnalyticsFilter, Platform } from '../types'
 import { ALL_PLATFORMS } from '../constants'
 
 export const DEFAULT_FILTER: AnalyticsFilter = {
-  keywords: ['SSM', 'Suruhanjaya', 'MySSM'],
-  dateFrom: '2025-04-01',
-  dateTo: '2025-04-30',
+  keywords: [],
+  dateFrom: '',
+  dateTo: '',
   platforms: [...ALL_PLATFORMS],
 }
 

@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from 'react'
+﻿import { useMemo, useState, useRef } from 'react'
 import { HeatMapGrid } from 'react-grid-heatmap'
 import { useTheme } from '../../../../hooks/useTheme'
 import { useChartTheme } from '../../hooks/useChartTheme'
@@ -88,7 +88,7 @@ export default function PostingHeatmap() {
 
       {tooltip && (
         <div
-          className="pointer-events-none absolute z-50 px-2.5 py-1.5 rounded-md text-xs shadow-md"
+          className="pointer-events-none absolute z-50 px-2.5 py-1.5 rounded-md text-sm shadow-md"
           style={{
             left: tooltip.x + 12,
             top: tooltip.y - 36,

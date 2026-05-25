@@ -1,7 +1,8 @@
-import { useNavigate } from 'react-router-dom'
+﻿import { useNavigate } from 'react-router-dom'
 import { MessageCircle, Search, BarChart3, Sparkles, Sun, Moon } from 'lucide-react'
 import pulseLogo from './assets/Pulse (Logo).svg'
 import { useTheme } from './hooks/useTheme'
+import Button from './components/ui/Button'
 
 const pillars = [
   {
@@ -58,20 +59,17 @@ export default function App() {
         {/* Hero */}
         <section className="text-center">
           <div className="max-w-2xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-[1.1] my-3">
+            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight leading-[1.1] my-3">
               From raw signal to{' '}
               <span className="text-blue-800 dark:text-blue-400">actionable intelligence</span>
             </h1>
-            <p className="text-slate-500 dark:text-zinc-400 text-sm leading-relaxed mb-6">
+            <p className="text-slate-500 dark:text-zinc-400 text-base leading-relaxed mb-6">
               Pulse gives analysts a unified view across social monitoring, OSINT investigation, analytics, and AI-driven reasoning — without switching tools.
             </p>
             <div className="flex items-center justify-center">
-              <button
-                onClick={() => navigate('/analytics')}
-                className="cursor-pointer bg-blue-800 hover:bg-blue-900 text-white text-sm font-medium px-5 py-2 rounded-sm transition-colors"
-              >
+              <Button onClick={() => navigate('/analytics')} size="lg">
                 Get Started
-              </button>
+              </Button>
             </div>
           </div>
         </section>
@@ -87,9 +85,9 @@ export default function App() {
                 <div className="w-7 h-7 rounded-md bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center mb-3 text-blue-800 dark:text-blue-400">
                   {pillar.icon}
                 </div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1">{pillar.label}</p>
-                <h3 className="font-semibold text-sm text-slate-900 dark:text-zinc-100 mb-1.5">{pillar.title}</h3>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">{pillar.description}</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1">{pillar.label}</p>
+                <h3 className="font-semibold text-base text-slate-900 dark:text-zinc-100 mb-1.5">{pillar.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-zinc-400 leading-relaxed">{pillar.description}</p>
               </div>
             ))}
           </div>

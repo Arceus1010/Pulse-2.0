@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 import MalaysiaMap from '../components/MalaysiaMap'
 import SentimentBar from '../components/SentimentBar'
 import SectionCard from '../../../components/ui/SectionCard'
@@ -12,7 +12,7 @@ function StateDetailPanel({ data, rank }: { data: StateData | null; rank: number
   if (!data) {
     return (
       <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg flex items-center justify-center p-8 min-h-48">
-        <p className="text-[11px] text-slate-400 dark:text-zinc-500 text-center leading-relaxed">
+        <p className="text-xs text-slate-400 dark:text-zinc-500 text-center leading-relaxed">
           Click a state on the map<br />to explore its details
         </p>
       </div>
@@ -22,11 +22,11 @@ function StateDetailPanel({ data, rank }: { data: StateData | null; rank: number
   return (
     <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg overflow-hidden flex flex-col">
       <div className="px-4 py-3 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
           State Detail
         </h2>
         {rank > 0 && (
-          <span className="text-[10px] font-mono text-slate-400 dark:text-zinc-500">
+          <span className="text-xs font-mono text-slate-400 dark:text-zinc-500">
             #{rank} by volume
           </span>
         )}
@@ -34,17 +34,17 @@ function StateDetailPanel({ data, rank }: { data: StateData | null; rank: number
 
       <div className="p-4 flex flex-col gap-5">
         <div>
-          <h3 className="text-xl font-bold text-slate-900 dark:text-zinc-100 leading-none">{data.state}</h3>
+          <h3 className="text-2xl font-bold text-slate-900 dark:text-zinc-100 leading-none">{data.state}</h3>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-sm font-mono text-slate-600 dark:text-zinc-300">{data.mentions.toLocaleString()}</span>
-            <span className="text-xs text-slate-400 dark:text-zinc-500">mentions</span>
+            <span className="text-base font-mono text-slate-600 dark:text-zinc-300">{data.mentions.toLocaleString()}</span>
+            <span className="text-sm text-slate-400 dark:text-zinc-500">mentions</span>
             <DeltaBadge delta={data.delta} />
           </div>
-          <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-0.5">{data.percentage}% of total mentions</p>
+          <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">{data.percentage}% of total mentions</p>
         </div>
 
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-2">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-2">
             Sentiment Breakdown
           </p>
           <SentimentBar
@@ -62,22 +62,22 @@ function StateDetailPanel({ data, rank }: { data: StateData | null; rank: number
               { label: 'Negative', value: data.sentiment.negative, color: SENTIMENT_COLORS.negative },
             ].map(s => (
               <div key={s.label}>
-                <p className="text-base font-bold leading-none" style={{ color: s.color }}>{s.value}%</p>
-                <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">{s.label}</p>
+                <p className="text-lg font-bold leading-none" style={{ color: s.color }}>{s.value}%</p>
+                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
         </div>
 
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-2">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-2">
             Top Topics
           </p>
           <div className="flex flex-wrap gap-1.5">
             {data.topTopics.map(t => (
               <span
                 key={t}
-                className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/40 font-medium"
+                className="text-xs px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800/40 font-medium"
               >
                 {t}
               </span>
@@ -86,10 +86,10 @@ function StateDetailPanel({ data, rank }: { data: StateData | null; rank: number
         </div>
 
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1">
+          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1">
             Lead Platform
           </p>
-          <p className="text-sm font-semibold text-slate-700 dark:text-zinc-200">{data.dominantPlatform}</p>
+          <p className="text-base font-semibold text-slate-700 dark:text-zinc-200">{data.dominantPlatform}</p>
         </div>
       </div>
     </div>
@@ -108,12 +108,12 @@ function StateTable({ data, selected, onSelect }: {
       <table className="w-full">
         <thead>
           <tr className="border-b border-slate-100 dark:border-zinc-800">
-            <th className="px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 w-8">#</th>
-            <th className="px-4 py-2 text-left  text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">State</th>
-            <th className="px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">Mentions</th>
-            <th className="px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">Change</th>
-            <th className="px-4 py-2 text-left  text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">Sentiment</th>
-            <th className="px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">Share</th>
+            <th className="px-4 py-2 text-right text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 w-8">#</th>
+            <th className="px-4 py-2 text-left  text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">State</th>
+            <th className="px-4 py-2 text-right text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">Mentions</th>
+            <th className="px-4 py-2 text-center text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">Change</th>
+            <th className="px-4 py-2 text-left  text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">Sentiment</th>
+            <th className="px-4 py-2 text-right text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">Share</th>
           </tr>
         </thead>
         <tbody>
@@ -129,9 +129,9 @@ function StateTable({ data, selected, onSelect }: {
                     : 'hover:bg-slate-50 dark:hover:bg-zinc-800/40'
                 }`}
               >
-                <td className="px-4 py-2.5 text-right text-[11px] font-mono text-slate-400 dark:text-zinc-600">{i + 1}</td>
-                <td className="px-4 py-2.5 text-sm font-medium text-slate-800 dark:text-zinc-200">{d.state}</td>
-                <td className="px-4 py-2.5 text-right text-xs font-mono text-slate-600 dark:text-zinc-300">{d.mentions.toLocaleString()}</td>
+                <td className="px-4 py-2.5 text-right text-xs font-mono text-slate-400 dark:text-zinc-600">{i + 1}</td>
+                <td className="px-4 py-2.5 text-base font-medium text-slate-800 dark:text-zinc-200">{d.state}</td>
+                <td className="px-4 py-2.5 text-right text-sm font-mono text-slate-600 dark:text-zinc-300">{d.mentions.toLocaleString()}</td>
                 <td className="px-4 py-2.5 text-center"><DeltaBadge delta={d.delta} /></td>
                 <td className="px-4 py-2.5">
                   <div className="flex items-center gap-2">
@@ -142,12 +142,12 @@ function StateTable({ data, selected, onSelect }: {
                         negative={d.sentiment.negative}
                       />
                     </div>
-                    <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 w-6 text-right shrink-0">
+                    <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 w-6 text-right shrink-0">
                       {d.sentiment.positive}%
                     </span>
                   </div>
                 </td>
-                <td className="px-4 py-2.5 text-right text-xs font-mono font-semibold text-slate-700 dark:text-zinc-200">{d.percentage}%</td>
+                <td className="px-4 py-2.5 text-right text-sm font-mono font-semibold text-slate-700 dark:text-zinc-200">{d.percentage}%</td>
               </tr>
             )
           })}
@@ -188,9 +188,9 @@ export default function GeoPage() {
             key={k.label}
             className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg px-4 py-3.5 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1.5">{k.label}</p>
-            <p className={`text-lg font-bold leading-none ${k.accent}`}>{k.value}</p>
-            <p className="text-[11px] text-slate-400 dark:text-zinc-500 mt-1">{k.sub}</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500 mb-1.5">{k.label}</p>
+            <p className={`text-xl font-bold leading-none ${k.accent}`}>{k.value}</p>
+            <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">{k.sub}</p>
           </div>
         ))}
       </div>
