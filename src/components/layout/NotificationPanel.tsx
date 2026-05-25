@@ -9,7 +9,7 @@ import { useResearch } from '../../features/research/hooks/useResearch'
 interface NotificationPanelProps {
   onClose: () => void
   sidebarWidth: number
-  buttonRef: React.RefObject<HTMLButtonElement>
+  buttonRef: React.RefObject<HTMLButtonElement | null>
 }
 
 export default function NotificationPanel({ onClose, sidebarWidth, buttonRef }: NotificationPanelProps) {

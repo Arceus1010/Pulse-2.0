@@ -283,7 +283,8 @@ export default function ReportArtifactView() {
                 contentStyle={{ backgroundColor: theme.tooltip.bg, border: `1px solid ${theme.tooltip.border}`, borderRadius: 6, fontSize: 12, color: theme.tooltip.text }}
                 labelStyle={{ color: theme.tooltip.label, fontSize: 11, marginBottom: 2 }}
                 itemStyle={{ color: theme.tooltip.text }}
-                formatter={(v: unknown) => [v, 'Complaints']}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                formatter={(v: any) => [typeof v === 'number' ? v.toLocaleString() : v, 'Complaints']}
               />
               <Line type="monotone" dataKey="complaints" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3, fill: '#3b82f6', strokeWidth: 0 }} activeDot={{ r: 5 }} />
             </LineChart>

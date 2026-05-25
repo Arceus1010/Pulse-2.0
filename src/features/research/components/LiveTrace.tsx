@@ -56,6 +56,7 @@ function StepCard({ item, index }: { item: DisplayItem; index: number }) {
 
   // Auto-expand while running; auto-collapse when the step completes.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (status === 'running')  setExpanded(true)
     if (status === 'complete') setExpanded(false)
   }, [status])
@@ -330,10 +331,10 @@ function buildDisplayList(task: Task): DisplayItem[] {
 // ─── Elapsed timer ────────────────────────────────────────────────────────────
 
 function useElapsedSeconds(since: string | null): number {
-  const [elapsed, setElapsed] = useState(0)
+  const [elapsed, setElapsed] = useState(() => since ? 0 : 0)
 
   useEffect(() => {
-    if (!since) { setElapsed(0); return }
+    if (!since) return
     const update = () =>
       setElapsed(Math.floor((Date.now() - new Date(since).getTime()) / 1000))
     update()

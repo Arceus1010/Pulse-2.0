@@ -95,7 +95,7 @@ function ProjectContent({ project }: { project: Project }) {
     }
   }, [isDragging])
 
-  function handleViewTrace(_taskId: string) {
+  function handleViewTrace() {
     setRequestedTab('trace')
   }
 

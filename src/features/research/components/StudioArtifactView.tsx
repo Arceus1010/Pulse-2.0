@@ -80,11 +80,13 @@ export default function StudioArtifactView({ project, task, requestedTab, onTabC
   }
 
   // Consume a tab switch requested by the parent (e.g. "View trace →" in ActivityPanel)
+  const tabRequestConsumedRef = useRef(false)
   useEffect(() => {
-    if (!requestedTab || !artifact) return
+    if (!requestedTab || !artifact || tabRequestConsumedRef.current) return
     setTabPerArtifact(prev => ({ ...prev, [artifact.id]: requestedTab }))
     onTabConsumed?.()
-  }, [requestedTab]) // eslint-disable-line react-hooks/exhaustive-deps
+    tabRequestConsumedRef.current = true
+  }, [requestedTab, artifact, onTabConsumed])
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
@@ -142,7 +144,7 @@ export default function StudioArtifactView({ project, task, requestedTab, onTabC
 <html lang="en">
 <head>
 <meta charset="UTF-8"><title>${title}</title>
-<script src="https://cdn.jsdelivr.net/npm/marked@14/marked.min.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/marked@14/marked.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,sans-serif;max-width:760px;margin:48px auto;padding:0 24px;color:#1e293b;font-size:14px;line-height:1.6}
@@ -169,7 +171,7 @@ hr{border:none;border-top:1px solid #e2e8f0;margin:28px 0}
 <script>
 document.getElementById('body').innerHTML=marked.parse(${content});
 setTimeout(function(){window.print()},400);
-<\/script>
+</script>
 </body>
 </html>`)
     w.document.close()

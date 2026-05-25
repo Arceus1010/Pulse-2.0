@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
-import { ResearchContext } from '../context/ResearchContext'
-import type { ResearchState, ResearchAction, ResearchContextValue } from '../context/ResearchContext'
+import { ResearchContext } from '../context/research.context'
+import type { ResearchContextValue, ResearchState, ResearchAction } from '../context/research.context'
 
 export type { ResearchState, ResearchAction, ResearchContextValue }
 

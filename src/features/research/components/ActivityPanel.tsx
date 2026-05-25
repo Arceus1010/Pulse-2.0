@@ -43,13 +43,16 @@ export default function ActivityPanel({ project, onFollowUp, onViewTrace, onRetr
   const [sourcesProjectOnly,setSourcesProjectOnly]= useState(project.sourcesProjectOnly)
   const bottomRef  = useRef<HTMLDivElement>(null)
   const prevArtifactCountRef = useRef(project.artifacts.length)
+  const prefillConsumedRef = useRef(false)
 
   // Sync prefill prompt into the textarea
   useEffect(() => {
-    if (!prefillFollowUp) return
-    setFollowUp(prefillFollowUp)
-    onPrefillConsumed?.()
-  }, [prefillFollowUp]) // eslint-disable-line react-hooks/exhaustive-deps
+    if (prefillFollowUp && !prefillConsumedRef.current) {
+      setFollowUp(prefillFollowUp)
+      onPrefillConsumed?.()
+      prefillConsumedRef.current = true
+    }
+  }, [prefillFollowUp, onPrefillConsumed])
 
   const hasNoTasks   = project.tasks.length === 0
   const hasArtifacts = project.artifacts.length > 0
@@ -77,7 +80,7 @@ export default function ActivityPanel({ project, onFollowUp, onViewTrace, onRetr
     if (prev === 0 && project.artifacts.length > 0) {
       setIntent('update')
     }
-  })
+  }, [project.artifacts.length])
 
   // Scroll to bottom when a new task is added
   useEffect(() => {

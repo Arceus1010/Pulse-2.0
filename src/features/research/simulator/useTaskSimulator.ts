@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 
 import type { Task, Artifact, Trace, TraceStep } from '../types'
 import { useResearch } from '../hooks/useResearch'
-import type { ResearchAction } from '../context/ResearchContext'
+import type { ResearchAction } from '../context/research.context'
 import { generateId } from '../utils/id'
 import {
   generateInitialTrace,
@@ -50,14 +50,19 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
   // without being listed as an effect dependency (dispatch from useReducer is
   // already stable, but the ref pattern makes the intent explicit).
   const dispatchRef = useRef<(action: ResearchAction) => void>(dispatch)
-  dispatchRef.current = dispatch
-
   const projectTitleRef = useRef(projectTitle)
-  projectTitleRef.current = projectTitle
+
+  useEffect(() => {
+    dispatchRef.current = dispatch
+  }, [dispatch])
+
+  useEffect(() => {
+    projectTitleRef.current = projectTitle
+  }, [projectTitle])
 
   // ── queued → planning ──────────────────────────────────────────────────────
   useEffect(() => {
-    if (task?.phase !== 'queued') return
+    if (!task || task.phase !== 'queued') return
 
     const taskId = task.id
     const trace  = generateInitialTrace(task)
@@ -68,7 +73,7 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }, 2_000)
 
     return () => clearTimeout(id)
-  }, [task?.id, task?.phase])
+  }, [task])
 
   // ── planning → pre_launch ─────────────────────────────────────────────────
   useEffect(() => {
@@ -106,7 +111,7 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }, 7_500)
 
     return () => clearTimeout(id)
-  }, [task?.id, task?.phase])
+  }, [task])
 
   // ── pre_launch handling ───────────────────────────────────────────────────
   useEffect(() => {
@@ -125,17 +130,19 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }
 
     if (mode === 'quick_check') {
-      setCountdownSeconds(20)
+      let countdown = 20
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCountdownSeconds(countdown)
 
       const intervalId = setInterval(() => {
-        setCountdownSeconds(prev => {
-          if (prev === null || prev <= 1) {
-            clearInterval(intervalId)
-            startExecuting()
-            return null
-          }
-          return prev - 1
-        })
+        countdown -= 1
+        if (countdown <= 0) {
+          clearInterval(intervalId)
+          startExecuting()
+          setCountdownSeconds(null)
+        } else {
+          setCountdownSeconds(countdown)
+        }
       }, 1_000)
 
       return () => {
@@ -145,7 +152,7 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }
 
     // confirm: do nothing — execution waits for an explicit launch() call.
-  }, [task?.id, task?.phase, task?.preLaunchMode])
+  }, [task])
 
   // ── executing → done ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -263,7 +270,7 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }, totalDurationMs)
 
     return () => ids.forEach(clearTimeout)
-  }, [task?.id, task?.phase])
+  }, [task, parentArtifact])
 
   // ── Controls ──────────────────────────────────────────────────────────────
 

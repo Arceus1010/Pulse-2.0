@@ -81,7 +81,7 @@ export function usePulseAI(hasAnalysed: boolean, keywords: string[]) {
 
     prevAnalysedRef.current = hasAnalysed
     prevKeywordsKeyRef.current = keywordsKey
-  }, [hasAnalysed, keywords]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [hasAnalysed, keywords])
 
   // Core send — does not touch input state
   const sendMessage = useCallback(

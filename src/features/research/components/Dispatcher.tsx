@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 import { Square, CheckSquare, ArrowRight } from 'lucide-react'
 import Button from '../../../components/ui/Button'
 
@@ -36,10 +36,14 @@ export default function Dispatcher({ onDispatch, prefillPrompt }: DispatcherProp
   const [sourcesWeb, setSourcesWeb] = useState(false)
   const [sourcesProjectOnly, setSourcesProjectOnly] = useState(false)
   const [reviewBeforeLaunch, setReviewBeforeLaunch] = useState(false)
+  const prefillConsumedRef = useRef(false)
 
   // Sync external prefill (example prompt chips)
   useEffect(() => {
-    if (prefillPrompt != null) setPrompt(prefillPrompt)
+    if (prefillPrompt != null && !prefillConsumedRef.current) {
+      setPrompt(prefillPrompt)
+      prefillConsumedRef.current = true
+    }
   }, [prefillPrompt])
 
   // Turning off KB removes the project-only sub-toggle
