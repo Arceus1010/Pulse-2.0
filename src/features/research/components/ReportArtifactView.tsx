@@ -1,29 +1,8 @@
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import DonutChart from '../../analytics/components/charts/DonutChart'
 import HorizontalBar from '../../analytics/components/charts/HorizontalBar'
 import SentimentStackedBar from '../../analytics/components/charts/SentimentStackedBar'
-import { useChartTheme } from '../../analytics/hooks/useChartTheme'
 
-// ─── Complaint trend ──────────────────────────────────────────────────────────
-
-const complaintTrend = [
-  { month: 'Jan 25',  complaints: 210  },
-  { month: 'Feb 25',  complaints: 245  },
-  { month: 'Mar 25',  complaints: 290  },
-  { month: 'Apr 25',  complaints: 340  },
-  { month: 'May 25',  complaints: 390  },
-  { month: 'Jun 25',  complaints: 630  },
-  { month: 'Jul 25',  complaints: 760  },
-  { month: 'Aug 25',  complaints: 840  },
-  { month: 'Sep 25',  complaints: 1340 },
-  { month: 'Oct 25',  complaints: 1680 },
-  { month: 'Nov 25',  complaints: 1520 },
-  { month: 'Dec 25',  complaints: 1450 },
-  { month: 'Jan 26',  complaints: 1380 },
-  { month: 'Feb 26',  complaints: 1490 },
-  { month: 'Mar 26',  complaints: 1310 },
-  { month: 'Apr 26',  complaints: 1160 },
-]
+// ─── Timeline events ──────────────────────────────────────────────────────────
 
 const timelineEvents = [
   { date: 'Jan 2025',     label: 'Policy Announcement',          color: 'bg-slate-400',  desc: 'MOF announces BUDI95 as part of 2025 Budget. PADU registration opens. Civil society groups raise data completeness concerns.' },
@@ -265,8 +244,6 @@ const nextSteps = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ReportArtifactView() {
-  const theme = useChartTheme()
-
   const toc = [
     'Executive Summary',
     'Problem Statement',
@@ -327,14 +304,30 @@ export default function ReportArtifactView() {
 
       {/* ── 1. Executive Summary ───────────────────────────────────── */}
       <Section id="section-1" number={1} title="Executive Summary">
-        <Callout color="blue">
-          Malaysia's BUDI95 targeted RON95 subsidy program locks the pump price at <strong>RM1.99/L</strong> for eligible B40 and lower-M40 households, against a floating unsubsidised market price currently near <strong>RM3.22/L</strong>. The program generates an estimated <strong>RM4.2 billion</strong> in annual fiscal savings — yet public complaints about eligibility misclassification, pump verification failures, and PADU database inaccuracies have surged <strong>+78%</strong> since national rollout in September 2025, creating a widening gap between the program's measurable benefits and its public perception.
-        </Callout>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-          <KpiCard value="RM1.99"  label="Subsidised RON95 price (eligible users)"    color="text-green-600 dark:text-green-400" />
-          <KpiCard value="RM4.2B" label="Estimated annual fiscal savings (EPU 2025)"  color="text-blue-600 dark:text-blue-400" />
-          <KpiCard value="+78%"   label="Public complaint surge since Sep 2025"       color="text-red-600 dark:text-red-400" />
-          <KpiCard value="8.6M"   label="Registered eligible recipients (PADU)"       color="text-amber-600 dark:text-amber-400" />
+        <div className="flex flex-col gap-3 mb-4">
+          <div className="rounded-lg border-l-4 border-teal-500 bg-teal-50 dark:bg-teal-950/30 px-4 py-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-teal-400 mb-1.5">Problem</p>
+            <p className="text-sm text-slate-700 dark:text-zinc-300 leading-relaxed">
+              BUDI95 launched in September 2025 to measured public acceptance — the program's fiscal savings rationale was broadly understood, and 8.6 million B40 and lower-M40 households enrolled within the first quarter. Eight months on, a deepening eligibility and infrastructure crisis has taken hold online. An estimated 450,000 households remain locked in unresolved appeals, pump-level verification failures peaked at ~12,000 incidents per week, and public complaint volume has surged +78% since national rollout — eroding confidence in the program's ability to deliver its core promise.
+            </p>
+          </div>
+          <div className="rounded-lg border-l-4 border-amber-400 bg-amber-50 dark:bg-amber-950/30 px-4 py-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-1.5">Top Finding</p>
+            <p className="text-sm text-slate-700 dark:text-zinc-300 leading-relaxed">
+              The complaint crisis is concentrated in four compounding failure modes: PADU database inaccuracy (~18% misclassification rate), last-mile pump infrastructure failures, eligibility blind spots for gig workers (~680,000 individuals), and a communication vacuum that misinformation has rushed to fill. These are not isolated incidents — they form a self-reinforcing feedback loop. Critically, negative voices command 1.85× the audience reach of positive voices, creating a perception gap that is significantly wider than the underlying operational reality of the program.
+            </p>
+          </div>
+          <div className="rounded-lg border-l-4 border-amber-400 bg-amber-50 dark:bg-amber-950/30 px-4 py-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-1.5">Top Recommended Action</p>
+            <p className="text-sm text-slate-700 dark:text-zinc-300 leading-relaxed">
+              Launch an immediate eligibility transparency initiative — publish real-time PADU dispute resolution statistics at a public dashboard, activate the offline pump verification fallback mode within 60 days, and deploy proactive SMS notifications for all eligibility status changes. These three actions address the highest-anger complaint categories and close the communication vacuum that is amplifying negative sentiment well beyond its true operational scale.
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <KpiCard value="62%"  label="Negative public sentiment share"       color="text-red-600 dark:text-red-400" />
+          <KpiCard value="186k" label="Total monitored mentions (Sep–Apr)"    color="text-blue-600 dark:text-blue-400" />
+          <KpiCard value="86%"  label="Analysis confidence level"             color="text-green-600 dark:text-green-400" />
         </div>
       </Section>
 
@@ -371,25 +364,6 @@ export default function ReportArtifactView() {
               ))}
             </tbody>
           </table>
-        </div>
-        <div className="rounded-xl border border-slate-200 dark:border-zinc-700/60 p-4 bg-white dark:bg-zinc-900 mb-4">
-          <p className="text-sm font-semibold text-slate-600 dark:text-zinc-400 mb-1">Monthly Complaint Volume (Jan 2025 – Apr 2026)</p>
-          <p className="text-xs text-slate-400 dark:text-zinc-500 mb-3">Aggregated across KPDNHEP helplines, PADU dispute portal, MCMC channels, and social media mentions</p>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={complaintTrend} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} vertical={false} />
-              <XAxis dataKey="month" tick={{ fill: theme.text, fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: theme.text, fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip
-                contentStyle={{ backgroundColor: theme.tooltip.bg, border: `1px solid ${theme.tooltip.border}`, borderRadius: 6, fontSize: 12, color: theme.tooltip.text }}
-                labelStyle={{ color: theme.tooltip.label, fontSize: 11, marginBottom: 2 }}
-                itemStyle={{ color: theme.tooltip.text }}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                formatter={(v: any) => [typeof v === 'number' ? v.toLocaleString() : v, 'Complaints']}
-              />
-              <Line type="monotone" dataKey="complaints" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3, fill: '#3b82f6', strokeWidth: 0 }} activeDot={{ r: 5 }} />
-            </LineChart>
-          </ResponsiveContainer>
         </div>
         <div className="flex flex-col gap-2">
           {timelineEvents.map(ev => (
