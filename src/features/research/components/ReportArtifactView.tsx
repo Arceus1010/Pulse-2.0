@@ -1,6 +1,29 @@
+import { ResponsiveContainer, AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts'
 import DonutChart from '../../analytics/components/charts/DonutChart'
 import HorizontalBar from '../../analytics/components/charts/HorizontalBar'
 import SentimentStackedBar from '../../analytics/components/charts/SentimentStackedBar'
+import { useChartTheme } from '../../analytics/hooks/useChartTheme'
+
+// ─── Engagement trend ─────────────────────────────────────────────────────────
+
+const engagementTrend = [
+  { month: 'Jan 25', likes: 1200,  shares: 340,  comments: 890,  total: 2430  },
+  { month: 'Feb 25', likes: 1450,  shares: 410,  comments: 1020, total: 2880  },
+  { month: 'Mar 25', likes: 1680,  shares: 490,  comments: 1180, total: 3350  },
+  { month: 'Apr 25', likes: 2100,  shares: 620,  comments: 1490, total: 4210  },
+  { month: 'May 25', likes: 2800,  shares: 840,  comments: 1920, total: 5560  },
+  { month: 'Jun 25', likes: 5200,  shares: 1640, comments: 3100, total: 9940  },
+  { month: 'Jul 25', likes: 6800,  shares: 2100, comments: 4200, total: 13100 },
+  { month: 'Aug 25', likes: 7900,  shares: 2480, comments: 4900, total: 15280 },
+  { month: 'Sep 25', likes: 12400, shares: 3900, comments: 7600, total: 23900 },
+  { month: 'Oct 25', likes: 18400, shares: 6200, comments: 11200,total: 35800 },
+  { month: 'Nov 25', likes: 15600, shares: 5100, comments: 9400, total: 30100 },
+  { month: 'Dec 25', likes: 13200, shares: 4200, comments: 7800, total: 25200 },
+  { month: 'Jan 26', likes: 12400, shares: 3900, comments: 7200, total: 23500 },
+  { month: 'Feb 26', likes: 14800, shares: 4600, comments: 8400, total: 27800 },
+  { month: 'Mar 26', likes: 11800, shares: 3600, comments: 6800, total: 22200 },
+  { month: 'Apr 26', likes: 9600,  shares: 2900, comments: 5400, total: 17900 },
+]
 
 // ─── Timeline events ──────────────────────────────────────────────────────────
 
@@ -244,6 +267,8 @@ const nextSteps = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ReportArtifactView() {
+  const theme = useChartTheme()
+
   const toc = [
     'Executive Summary',
     'Problem Statement',
@@ -365,7 +390,73 @@ export default function ReportArtifactView() {
             </tbody>
           </table>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="mt-5 rounded-xl border border-slate-200 dark:border-zinc-700/60 p-4 bg-white dark:bg-zinc-900">
+          <p className="text-sm font-semibold text-slate-600 dark:text-zinc-400 mb-1">Evolution of the Issue Over Time</p>
+          <p className="text-xs text-slate-400 dark:text-zinc-500 mb-4">Public engagement across all monitored platforms · spikes annotated with the KOL or publisher that triggered them</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+            {/* Total engagement */}
+            <div>
+              <p className="text-xs font-medium text-slate-500 dark:text-zinc-400 mb-2">Total Engagement</p>
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={engagementTrend} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="totalGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#3b82f6" stopOpacity={0.18} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} vertical={false} />
+                  <XAxis dataKey="month" tick={{ fill: theme.text, fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: theme.text, fontSize: 10 }} axisLine={false} tickLine={false}
+                    tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: theme.tooltip.bg, border: `1px solid ${theme.tooltip.border}`, borderRadius: 6, fontSize: 11, color: theme.tooltip.text }}
+                    labelStyle={{ color: theme.tooltip.label, fontSize: 10, marginBottom: 2 }}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    formatter={(v: any) => [typeof v === 'number' ? v.toLocaleString() : v, 'Total']}
+                  />
+                  <Area type="monotone" dataKey="total" stroke="#3b82f6" strokeWidth={2} fill="url(#totalGrad)" dot={false} activeDot={{ r: 4 }} />
+                  <ReferenceLine x="Jun 25" stroke="#f59e0b" strokeDasharray="3 3" strokeWidth={1.5} />
+                  <ReferenceLine x="Oct 25" stroke="#ef4444" strokeDasharray="3 3" strokeWidth={1.5} />
+                  <ReferenceLine x="Nov 25" stroke="#ef4444" strokeDasharray="3 3" strokeWidth={1.5} />
+                  <ReferenceLine x="Feb 26" stroke="#f97316" strokeDasharray="3 3" strokeWidth={1.5} />
+                  <ReferenceLine x="Apr 26" stroke="#22c55e" strokeDasharray="3 3" strokeWidth={1.5} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Breakdown by type */}
+            <div>
+              <p className="text-xs font-medium text-slate-500 dark:text-zinc-400 mb-2">Breakdown by Type</p>
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={engagementTrend} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} vertical={false} />
+                  <XAxis dataKey="month" tick={{ fill: theme.text, fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: theme.text, fontSize: 10 }} axisLine={false} tickLine={false}
+                    tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: theme.tooltip.bg, border: `1px solid ${theme.tooltip.border}`, borderRadius: 6, fontSize: 11, color: theme.tooltip.text }}
+                    labelStyle={{ color: theme.tooltip.label, fontSize: 10, marginBottom: 2 }}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    formatter={(v: any, name: any) => [typeof v === 'number' ? v.toLocaleString() : v, name]}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 11, paddingTop: 6 }} />
+                  <Line type="monotone" dataKey="likes"    name="Likes"    stroke="#3b82f6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="shares"   name="Shares"   stroke="#f97316" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="comments" name="Comments" stroke="#a855f7" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                  <ReferenceLine x="Jun 25" stroke="#f59e0b" strokeDasharray="3 3" strokeWidth={1.5} />
+                  <ReferenceLine x="Oct 25" stroke="#ef4444" strokeDasharray="3 3" strokeWidth={1.5} />
+                  <ReferenceLine x="Nov 25" stroke="#ef4444" strokeDasharray="3 3" strokeWidth={1.5} />
+                  <ReferenceLine x="Feb 26" stroke="#f97316" strokeDasharray="3 3" strokeWidth={1.5} />
+                  <ReferenceLine x="Apr 26" stroke="#22c55e" strokeDasharray="3 3" strokeWidth={1.5} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 mt-4">
           {timelineEvents.map(ev => (
             <div key={ev.date} className="flex items-start gap-3">
               <div className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${ev.color}`} />
