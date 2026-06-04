@@ -73,7 +73,8 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }, 2_000)
 
     return () => clearTimeout(id)
-  }, [task])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task?.id, task?.phase])
 
   // ── planning → pre_launch ─────────────────────────────────────────────────
   useEffect(() => {
@@ -111,7 +112,8 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }, 7_500)
 
     return () => clearTimeout(id)
-  }, [task])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task?.id, task?.phase])
 
   // ── pre_launch handling ───────────────────────────────────────────────────
   useEffect(() => {
@@ -152,7 +154,8 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }
 
     // confirm: do nothing — execution waits for an explicit launch() call.
-  }, [task])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task?.id, task?.phase])
 
   // ── executing → done ──────────────────────────────────────────────────────
   useEffect(() => {
@@ -270,7 +273,8 @@ export function useTaskSimulator(task: Task | null, parentArtifact: Artifact | n
     }, totalDurationMs)
 
     return () => ids.forEach(clearTimeout)
-  }, [task, parentArtifact])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task?.id, task?.phase, parentArtifact?.id])
 
   // ── Controls ──────────────────────────────────────────────────────────────
 
