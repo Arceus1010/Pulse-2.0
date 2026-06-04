@@ -1,8 +1,13 @@
+import { useRef, useEffect, useState } from 'react'
 import { ResponsiveContainer, AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore – react-force-graph-2d ships CJS without bundled d.ts
+import ForceGraph2D from 'react-force-graph-2d'
 import DonutChart from '../../analytics/components/charts/DonutChart'
 import HorizontalBar from '../../analytics/components/charts/HorizontalBar'
 import SentimentStackedBar from '../../analytics/components/charts/SentimentStackedBar'
 import { useChartTheme } from '../../analytics/hooks/useChartTheme'
+import { useTheme } from '@/hooks/useTheme'
 
 // ─── Engagement trend ─────────────────────────────────────────────────────────
 
@@ -130,6 +135,152 @@ const influencerTimeline = [
   { date: 'Feb 2026', name: 'The Star Online',    platform: 'News',       sentiment: 'Neutral',  reach: '800k',  event: 'Moderation Coverage',        quote: 'Complaint volume moderating — PADU Phase 2 corrections show early results, though 450,000 appeals remain unresolved.' },
   { date: 'Mar 2026', name: 'IDEAS Malaysia',      platform: 'Think Tank', sentiment: 'Neutral',  reach: '55k',   event: 'Independent Assessment',     quote: "Our assessment puts PADU income classification accuracy at 82% — below the government's 92% figure." },
 ]
+
+// ─── Narrative network graph ──────────────────────────────────────────────────
+
+const NODE_COLORS: Record<string, string> = {
+  source: '#3b82f6',
+  author: '#22c55e',
+  org:    '#a855f7',
+  topic:  '#ef4444',
+}
+
+const narrativeGraphData = {
+  nodes: [
+    // Sources
+    { id: 'src-mkini',    name: 'Malaysiakini',        type: 'source', val: 9  },
+    { id: 'src-bernama',  name: 'Bernama',              type: 'source', val: 6  },
+    { id: 'src-star',     name: 'The Star Online',      type: 'source', val: 5  },
+    { id: 'src-fmt',      name: 'Free Malaysia Today',  type: 'source', val: 4  },
+    { id: 'src-sinchew',  name: 'Sin Chew Daily',       type: 'source', val: 3  },
+    // Authors / KOLs
+    { id: 'auth-saddiq',  name: 'Syed Saddiq',          type: 'author', val: 12 },
+    { id: 'auth-warga',   name: '@wargajohor',           type: 'author', val: 3  },
+    { id: 'auth-startup', name: '@startup_kl',           type: 'author', val: 2  },
+    { id: 'auth-ideas',   name: 'IDEAS Malaysia',        type: 'author', val: 4  },
+    // Organisations
+    { id: 'org-padu',     name: 'PADU',                  type: 'org',    val: 10 },
+    { id: 'org-mof',      name: 'MOF',                   type: 'org',    val: 7  },
+    { id: 'org-mcmc',     name: 'MCMC',                  type: 'org',    val: 5  },
+    { id: 'org-kpdnhep',  name: 'KPDNHEP',               type: 'org',    val: 4  },
+    // Topics
+    { id: 'top-elig',     name: 'Eligibility Errors',    type: 'topic',  val: 9  },
+    { id: 'top-foreign',  name: 'Foreigner Abuse',        type: 'topic',  val: 7  },
+    { id: 'top-padu',     name: 'PADU Misclassification', type: 'topic', val: 8  },
+    { id: 'top-fiscal',   name: 'Fiscal Savings',         type: 'topic',  val: 5  },
+    { id: 'top-infra',    name: 'Infrastructure Failure', type: 'topic',  val: 6  },
+    { id: 'top-gig',      name: 'Gig Worker Exclusion',   type: 'topic',  val: 5  },
+  ],
+  links: [
+    // Sources → Topics
+    { source: 'src-mkini',    target: 'top-padu',    label: 'reports on' },
+    { source: 'src-mkini',    target: 'top-elig',    label: 'reports on' },
+    { source: 'src-bernama',  target: 'top-fiscal',  label: 'reports on' },
+    { source: 'src-star',     target: 'top-padu',    label: 'reports on' },
+    { source: 'src-fmt',      target: 'top-infra',   label: 'reports on' },
+    { source: 'src-sinchew',  target: 'top-elig',    label: 'reports on' },
+    // Authors → Topics
+    { source: 'auth-saddiq',  target: 'top-elig',    label: 'amplifies'  },
+    { source: 'auth-saddiq',  target: 'top-padu',    label: 'amplifies'  },
+    { source: 'auth-warga',   target: 'top-infra',   label: 'amplifies'  },
+    { source: 'auth-startup', target: 'top-gig',     label: 'amplifies'  },
+    { source: 'auth-ideas',   target: 'top-padu',    label: 'warns'      },
+    { source: 'auth-ideas',   target: 'top-fiscal',  label: 'challenges' },
+    // Orgs → Topics
+    { source: 'org-padu',     target: 'top-elig',    label: 'triggers'   },
+    { source: 'org-padu',     target: 'top-foreign', label: 'triggers'   },
+    { source: 'org-padu',     target: 'top-padu',    label: 'manages'    },
+    { source: 'org-mof',      target: 'top-fiscal',  label: 'publishes'  },
+    { source: 'org-mcmc',     target: 'top-foreign', label: 'regulates'  },
+    { source: 'org-kpdnhep',  target: 'top-infra',   label: 'regulates'  },
+    // Cross-actor
+    { source: 'src-mkini',    target: 'auth-saddiq', label: 'amplifies'  },
+    { source: 'src-bernama',  target: 'org-mof',     label: 'covers'     },
+    { source: 'src-star',     target: 'org-padu',    label: 'covers'     },
+    { source: 'auth-saddiq',  target: 'org-padu',    label: 'challenges' },
+  ],
+}
+
+function NarrativeNetworkGraph() {
+  const { isDark } = useTheme()
+  const containerRef = useRef<HTMLDivElement>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fgRef = useRef<any>(null)
+  const [width, setWidth] = useState(600)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    setWidth(el.offsetWidth)
+    const ro = new ResizeObserver(() => setWidth(el.offsetWidth))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  // Increase repulsion so nodes spread apart from the default tight cluster
+  useEffect(() => {
+    const fg = fgRef.current
+    if (!fg) return
+    fg.d3Force('charge').strength(-350)
+    fg.d3Force('link').distance(100)
+    fg.d3ReheatSimulation()
+  }, [])
+
+  return (
+    <div ref={containerRef} className="w-full rounded-xl overflow-hidden border border-slate-200 dark:border-zinc-700/60">
+      <ForceGraph2D
+        ref={fgRef}
+        graphData={narrativeGraphData}
+        width={width}
+        height={500}
+        backgroundColor={isDark ? '#18181b' : '#f8fafc'}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeColor={(node: any) => NODE_COLORS[node.type as string] ?? '#94a3b8'}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeLabel={(node: any) => `${node.name as string} · ${node.type as string}`}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        nodeVal={(node: any) => node.val as number}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        linkLabel={(link: any) => link.label as string}
+        linkDirectionalArrowLength={4}
+        linkDirectionalArrowRelPos={1}
+        linkColor={() => isDark ? '#52525b' : '#94a3b8'}
+        linkWidth={1}
+        nodeCanvasObjectMode={() => 'after'}
+        nodeCanvasObject={(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          node: any,
+          ctx: CanvasRenderingContext2D,
+          globalScale: number,
+        ) => {
+          if (node.x == null || node.y == null) return
+          const label    = node.name as string
+          const fontSize = Math.max(9, 10 / globalScale)
+          ctx.font       = `${fontSize}px sans-serif`
+
+          const textW = ctx.measureText(label).width
+          const pad   = 2.5
+          const r     = Math.sqrt(Math.max(0, (node.val as number) ?? 4)) * 3
+          const tx    = node.x as number
+          const ty    = (node.y as number) + r + 4
+
+          // Semi-transparent background slab for readability
+          ctx.fillStyle = isDark ? 'rgba(24,24,27,0.88)' : 'rgba(255,255,255,0.88)'
+          ctx.fillRect(tx - textW / 2 - pad, ty, textW + pad * 2, fontSize + pad * 2)
+
+          // Label text
+          ctx.fillStyle    = isDark ? '#e4e4e7' : '#0f172a'
+          ctx.textAlign    = 'center'
+          ctx.textBaseline = 'top'
+          ctx.fillText(label, tx, ty + pad)
+          ctx.textBaseline = 'alphabetic' // reset for other draw calls
+        }}
+        warmupTicks={60}
+        cooldownTicks={100}
+      />
+    </div>
+  )
+}
 
 // ─── Root causes ──────────────────────────────────────────────────────────────
 
@@ -274,6 +425,7 @@ export default function ReportArtifactView() {
     'Problem Statement',
     'Sentiment by Platform',
     'Influencer & Voice Analysis',
+    'Narrative Network Analysis',
     'Fact-Check Analytics',
     'Most Impacted Demographics / Sectors',
     'Root Cause Breakdown',
@@ -582,22 +734,54 @@ export default function ReportArtifactView() {
             <strong>Narrative gap identified:</strong> No credible independent positive voice exists outside government channels. Civil society and think tank voices (IDEAS, World Bank) occupy the neutral tier — there is no non-government advocate actively defending the program's design rationale to a mass audience. This vacuum is a strategic communication risk.
           </p>
         </div>
+
       </Section>
 
-      {/* ── 5. Fact-Check Analytics ────────────────────────────────── */}
-      <Section id="section-5" number={5} title="Fact-Check Analytics">
+      {/* ── 5. Narrative Network Analysis ─────────────────────────── */}
+      <Section id="section-5" number={5} title="Narrative Network Analysis">
+        <p className="text-base text-slate-600 dark:text-zinc-400 leading-relaxed mb-4">
+          Force-directed graph mapping how Sources, Authors, Organisations, and Topics interconnect across the BUDI95 discourse. Drag nodes to explore the network. Hover over any node for its name and type, and over any edge for the relationship label. Arrow direction shows the flow of influence or coverage.
+        </p>
+        <NarrativeNetworkGraph />
+        <div className="flex flex-wrap gap-x-4 gap-y-2 mt-3 mb-4 items-center">
+          {[
+            { label: 'Source / Media',  color: '#3b82f6' },
+            { label: 'Author / KOL',    color: '#22c55e' },
+            { label: 'Organisation',    color: '#a855f7' },
+            { label: 'Topic / Theme',   color: '#ef4444' },
+          ].map(({ label, color }) => (
+            <div key={label} className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+              <span className="text-xs text-slate-500 dark:text-zinc-400">{label}</span>
+            </div>
+          ))}
+          <span className="text-xs text-slate-300 dark:text-zinc-600 mx-1">|</span>
+          <span className="text-xs text-slate-400 dark:text-zinc-500">Node size = reach / influence weight</span>
+        </div>
+        <div className="rounded-lg bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-700/60 px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400 mb-2">How to read this graph</p>
+          <ul className="space-y-2 text-sm text-slate-600 dark:text-zinc-400 list-none">
+            <li><strong className="text-slate-800 dark:text-zinc-200">Syed Saddiq</strong> is the highest-degree Author node — his connections bridge directly into Malaysiakini's media amplification loop, making him the single most impactful non-institutional voice amplifying PADU Misclassification and Eligibility Errors.</li>
+            <li><strong className="text-slate-800 dark:text-zinc-200">PADU</strong> is the most connected Org node — it simultaneously triggers Eligibility Errors, Foreigner Abuse Narrative, and manages its own misclassification topic, making it the structural root of three of the four highest-volume complaint themes.</li>
+            <li><strong className="text-slate-800 dark:text-zinc-200">Foreigner Abuse Narrative</strong> has no Org edge pointing to it — it is entirely Author and Source-driven, indicating a bottom-up disinformation cluster that MCMC enforcement can only address reactively after content has already spread.</li>
+          </ul>
+        </div>
+      </Section>
+
+      {/* ── 6. Fact-Check Analytics ────────────────────────────────── */}
+      <Section id="section-6" number={6} title="Fact-Check Analytics">
         <p className="text-base text-slate-600 dark:text-zinc-400 leading-relaxed mb-4">
           Analysis of public discourse themes, audience segments generating the highest complaint volume, and geographic distribution of negative mentions across Malaysia. Of 47 web and social sources retrieved, <strong className="text-slate-800 dark:text-zinc-200">14 were retained</strong> after relevance and credibility filtering.
         </p>
 
-        <p className="text-sm font-semibold text-slate-700 dark:text-zinc-200 mb-2">5.1 Complaint Theme Breakdown</p>
+        <p className="text-sm font-semibold text-slate-700 dark:text-zinc-200 mb-2">6.1 Complaint Theme Breakdown</p>
         <div className="rounded-xl border border-slate-200 dark:border-zinc-700/60 p-4 bg-white dark:bg-zinc-900 mb-4">
           <p className="text-sm font-semibold text-slate-600 dark:text-zinc-400 mb-1">Negative mention themes — BUDI95</p>
           <HorizontalBar data={complaintThemeData} valueFormatter={v => `${v}%`} />
           <p className="text-xs text-slate-400 dark:text-zinc-500 mt-3">Percentages exceed 100% as individual mentions may cite multiple themes.</p>
         </div>
 
-        <p className="text-sm font-semibold text-slate-700 dark:text-zinc-200 mb-2">5.2 Audience Segmentation</p>
+        <p className="text-sm font-semibold text-slate-700 dark:text-zinc-200 mb-2">6.2 Audience Segmentation</p>
         <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-zinc-700/60 mb-4">
           <table className="w-full text-base border-collapse">
             <thead className="bg-slate-800 dark:bg-zinc-700">
@@ -663,7 +847,7 @@ export default function ReportArtifactView() {
       </Section>
 
       {/* ── 6. Most Impacted Demographics / Sectors ───────────────── */}
-      <Section id="section-6" number={6} title="Most Impacted Demographics / Sectors">
+      <Section id="section-7" number={7} title="Most Impacted Demographics / Sectors">
         <p className="text-base text-slate-600 dark:text-zinc-400 leading-relaxed mb-4">
           BUDI95's impact is unevenly distributed. Implementation friction concentrates harm in specific demographic and economic segments — particularly those with irregular income patterns, low digital literacy, or operational dependence on fuel.
         </p>
@@ -729,7 +913,7 @@ export default function ReportArtifactView() {
       </Section>
 
       {/* ── 7. Root Cause Breakdown ────────────────────────────────── */}
-      <Section id="section-7" number={7} title="Root Cause Breakdown">
+      <Section id="section-8" number={8} title="Root Cause Breakdown">
         <p className="text-base text-slate-600 dark:text-zinc-400 leading-relaxed mb-4">
           Four structural root causes underpin BUDI95's rollout friction. These are not independent — they compound one another. PADU inaccuracy generates eligibility disputes; disputes generate media coverage; media coverage generates misinformation; misinformation generates MCMC enforcement; and enforcement generates its own public blowback. Resolving any one in isolation addresses symptoms, not the system.
         </p>
@@ -747,7 +931,7 @@ export default function ReportArtifactView() {
       </Section>
 
       {/* ── 8. Risk Assessment ────────────────────────────────────── */}
-      <Section id="section-8" number={8} title="Risk Assessment">
+      <Section id="section-9" number={9} title="Risk Assessment">
         <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-zinc-700/60">
           <table className="w-full text-base border-collapse">
             <thead className="bg-slate-50 dark:bg-zinc-800">
@@ -772,7 +956,7 @@ export default function ReportArtifactView() {
       </Section>
 
       {/* ── 9. Suggested Solutions ────────────────────────────────── */}
-      <Section id="section-9" number={9} title="Suggested Solutions">
+      <Section id="section-10" number={10} title="Suggested Solutions">
         <p className="text-base text-slate-600 dark:text-zinc-400 leading-relaxed mb-4">
           Six prioritised interventions across data infrastructure, last-mile delivery, communications, and fiscal integrity. The four highest-priority actions are detailed below with concrete implementation steps and expected outcomes.
         </p>
@@ -829,7 +1013,7 @@ export default function ReportArtifactView() {
       </Section>
 
       {/* ── 10. Data Confidence & Source Comparison ───────────────── */}
-      <Section id="section-10" number={10} title="Data Confidence & Source Comparison">
+      <Section id="section-11" number={11} title="Data Confidence & Source Comparison">
         <p className="text-base text-slate-600 dark:text-zinc-400 leading-relaxed mb-4">
           Points of divergence between official government data and independent assessments. Official metrics consistently present BUDI95 more favourably — not because the data is fabricated, but because it measures implementation inputs (registrations, fiscal savings) rather than implementation outcomes (user experience, eligibility accuracy, sentiment).
         </p>
@@ -874,7 +1058,7 @@ export default function ReportArtifactView() {
       </Section>
 
       {/* ── 11. Strategic Implications for Private Sector ─────────── */}
-      <Section id="section-11" number={11} title="Strategic Implications for Private Sector">
+      <Section id="section-12" number={12} title="Strategic Implications for Private Sector">
         <Callout color="blue">
           BUDI95's rollout has created a newly segmented, income-verified consumer base of <strong>8.6 million B40 and lower-M40 households</strong>. The program's friction points are simultaneously a public policy problem and a <strong>private sector opportunity</strong>: the gaps government cannot fill quickly enough create commercial openings for fintech, insurance, logistics, and data infrastructure players.
         </Callout>
@@ -979,7 +1163,7 @@ export default function ReportArtifactView() {
       </Section>
 
       {/* ── 12. Monitoring, Alerts & Next Steps ───────────────────── */}
-      <Section id="section-12" number={12} title="Monitoring, Alerts & Next Steps">
+      <Section id="section-13" number={13} title="Monitoring, Alerts & Next Steps">
         <Callout color="amber">
           If PADU Phase 2 corrections do not resolve the 450,000 pending appeals by Q3 2026, the program faces a politically significant milestone: <strong>one year of unresolved disputes</strong>. This will provide opposition parties and civil society groups with a materially stronger narrative than anything generated during the rollout period. The window to stabilise is Q2–Q3 2026.
         </Callout>
